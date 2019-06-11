@@ -80,9 +80,9 @@
 - *update_hyd_pos.m*: calculates a new hydrophone geodesic position using the original position and position offsets given by inverse solutions.
 
 ### Data
--h….ctd: CTD cast data
+- h….ctd: CTD cast data
 
--ioc_station…csv: tide data
+- ioc_station…csv: tide data
 
 **inversion_file**: contains inverse solutions of sound speed perturbation fields. Import to Matlab and plot data using *SS_inversion(_icListen).m* and *Analyze_inversion.m*.
 
@@ -118,9 +118,14 @@
 
 - *PSD_HEM/PSD_icListen*: plot periodograms of acoustic receptions from HEM and icListen data
 
-## Notes:
+## Notes
 
-Boris June 11 2019: *distance.m* is called in many scripts which is a function in Mapping Toolbox. This function replaces dist.m function which was found to produce inaccurate geodesic distances.
+**Boris June 11 2019** 
+1. *distance.m* is called in many scripts which is a function in Mapping Toolbox. This function replaces *dist.m* function which was found to produce inaccurate geodesic distances.
+
+2. Need to install *Aerospace Toolbox* and *Mapping Toolbox*
+
+
 
 
 ## Work flow
