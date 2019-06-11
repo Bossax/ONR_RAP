@@ -1,7 +1,9 @@
 # ONR_RAP
 
-Routine: A folder contains scripts which are used to produce files from raw data.
-•read_binary_data_all_files.m – produces .mat posmv files from POSMV binary files. The 
+**Routine**: A folder contains scripts which are used to produce files from raw data.
+
+•read_binary_data_all_files.m – produces .mat posmv files from POSMV binary files.
+
 •read_binary.m – produce a single posmv file. 
 •find_transmission_info_all_files_general.m – produces .mat tx files from Scarlette files containing latitude, longitude, times, heading, velocities of the vessel when transmissions were made. The tx files are created based on hours of file creation (grouping is based on file’s names). The script requires POSMV files created by read_binary_data_all_files. A transmission time provided by a Scarlette file is matched with the closet POSMVdata point in time. 
 •find_reception_info.m – produces .mat rx files from HEM audio containing estimated arrival times, actual arrival times, and SNRs. 
