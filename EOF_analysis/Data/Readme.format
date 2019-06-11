@@ -1,0 +1,80 @@
+                 CTD Mean Data at ALOHA Station Format Document
+
+
+    Mean data from station ALOHA CTD casts data are distributed in a format
+described here.
+
+    The ensemble of 2-dbar CTD casts is averaged at each pressure interval
+and written to a file named hot***.mn, where *** is the cruise number.
+
+    The mean CTD file consists of 7 columns. The first record includes 
+the cruise number, station number, and the mean date of the casts (year,
+month, day), followed by two more integers with the cruise number to
+complete the 7 fields for this record
+
+    Record 1:
+       Column  Format   Item
+         1-3      i3    HOT Cruise number
+         4-5      i2    Station number
+         6-7      i2    Year (last two digits)
+         8-9      i2    Month
+        10-12     i3    Day
+        13-16     i4    Cruise number
+        17-20     i4    Cruise number
+        
+     Cruises after HOT-176 contain two zeros to complete 9 fields for this
+  record, see below
+               
+     The remaining records contain CTD data. The order of variables in a
+record is as follows: pressure, temperature, salinity, oxygen, trans-
+mission, chloropigments (from the CTD fluorometer), and number of data 
+used in the average.  Missing values are flagged with -9.0. 
+
+     Cruises after HOT-176 also contain potential temperature and Potential 
+     density (sigma-theta)
+
+   Data Record Format:
+
+        Column  Format  Item
+         1-8    f8.1    Pressure (Decibars)
+         9-18   f10.4   Temperature (Degrees Celsius,
+                        International Temperature Scale of 1990)
+        19-28   f10.4   Salinity (1978 International Practical Salinity Scale)
+        29-36   f8.2    Oxygen (micromoles per kilogram)
+        37-43   f7.3    Transmission (% transmission)
+        44-51   f8.4    Chloropigments (microgram/liter)
+        52-57   i6      Number of CTD casts averaged at this pressure level
+Cruises after HOT-176
+        60-67   f8.4    Potential temperature (Degrees Celsius)
+        70-77   f8.4    Potential density (sigma-theta)
+
+Sample File: (First and last few records, cruises 1 to 176)
+
+150 2 3 7 20 150 150
+    0.0   26.1109   35.3177  206.63 -9.000  0.0962    12
+    2.0   26.1537   35.3067  206.45 -9.000  0.0897    15
+    4.0   26.1556   35.3077  206.40 -9.000  0.0859    15
+    6.0   26.1561   35.3069  206.38 -9.000  0.0802    15
+    8.0   26.1565   35.3085  206.97 -9.000  0.0789    15
+   10.0   26.1562   35.3065  207.82 -9.000  0.0756    15
+...
+
+ 4798.0    1.5156   34.6894  153.20 -9.000  0.0428     1
+ 4800.0    1.5160   34.6894  153.20 -9.000  0.0426     1
+ 4802.0    1.5161   34.6893  153.20 -9.000  0.0425     1
+ 4804.0    1.5165   34.6895  153.20 -9.000  0.0424     1
+ 4806.0    1.5167   34.6895  153.20 -9.000  0.0429     1
+
+Sample File: (First and last few records, cruises after 176)
+
+177 2 6 1 26 177 177 0 0
+    0.0   23.5361   35.2681  207.80 -9.000 -9.0000    12   23.5219   23.9869
+    2.0   23.5589   35.2608  208.20 -9.000  0.3540    14   23.5751   23.9657
+    4.0   23.5596   35.2641  208.10 -9.000  0.2511    14   23.5588   23.9730
+....
+
+ 1018.0    3.9911   34.4782   41.73 -9.000  0.0263    14    3.9141   27.3800
+ 1020.0    3.9837   34.4781   41.70 -9.000  0.0271    14    3.9066   27.3807
+ 1022.0    3.9792   34.4785   41.70 -9.000  0.0274    14    3.9019   27.3815
+ 1024.0    3.9804   34.4788   41.15 -9.000  0.0279     7    3.9029   27.3816
+ 1026.0    4.0113   34.4858   -9.00 -9.000  0.0223     1    3.9334   27.3841

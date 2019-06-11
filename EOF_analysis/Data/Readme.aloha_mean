@@ -1,0 +1,17 @@
+              Mean data from station ALOHA CTD casts.
+
+During HOT cruises, CTD casts are conducted at station ALOHA to a depth 
+of 1000 m for a period of 36 hours at 3-hour intervals. The purpose 
+of this is to average out the local near-inertial and tidal periods and 
+therefore preventing the aliasing of longer-term fluctuations whose 
+detection is one of the main objectives of the WOCE Hydrographic 
+Time-series program.
+
+The ensemble of 2-dbar CTD casts is averaged at each pressure interval
+and written to a file named hot***.mn, where *** is the cruise number.
+Each file contains pressure, temperature and salinity data, and some
+also have dissolved oxygen, light transmission, and fluorescence. 
+The data records are written so that they can be read with a simple 
+program read statement. Details of this format are given in the file 
+Readme.format.
+
