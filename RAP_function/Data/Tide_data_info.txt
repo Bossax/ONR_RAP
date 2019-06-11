@@ -1,0 +1,2 @@
+soest tide model = time resolution 1 hr
+buoy data = time resolution 1 min
