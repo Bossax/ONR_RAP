@@ -1,6 +1,6 @@
 # ONR_RAP
 
-###Routine: A folder contains scripts which are used to produce files from raw data.
+### Routine: A folder contains scripts which are used to produce files from raw data.
 
 - *read_binary_data_all_files.m*: produces .mat posmv files from POSMV binary files.
 
@@ -12,7 +12,7 @@
 
 - *find_reception_info_icListen.m*: same as above but works with icListen audio.
 	
-###RAP_function: A folder contains functions which are called by other scripts.
+### RAP_function: A folder contains functions which are called by other scripts.
 
 - *hyd_audio_prep/icListen_audio_prep.m*: read audio files and assign timestamps to data points
 
@@ -38,7 +38,7 @@
 
 - *data_error_matrix.m*: returns a data-data covariance matrix Cd. 
 
-###Regression
+### Regression
 
  - *Regression_Analysis_ttp.m*: implements Lasso regression on travel time perturbation data to determine non-physical factor contributions to the measurements.
 
@@ -52,20 +52,20 @@
 
 - *TTP_SNR_Acoustic_plot_w_psd_icListen.m*: same as above, but also includes power spectra of individual receptions (used for spin courses).
 
-###IRIG_B
+### IRIG_B
 
 - *IRIGB_decoder_test.m* – decode IRIG-B time code recorded in October 2018 (saved in Scarlette files).
 
 
 
 
-###Bottom_bouncing_detection: scripts to find bottom bounces
+### Bottom_bouncing_detection: scripts to find bottom bounces
 
 - *Bottom_bouncing_detection_HEM/ic.m*: plots acoustic signals and complex envelopes and determine the first 2 peaks of the envelopes.
 
 - *All_arrival_detection.m*: finds all signal arrivals which exceed the set SNR threshold
 
-###Inversion: contains script to perform inversion procedure
+### Inversion: contains script to perform inversion procedure
 
 - *Simulation_2D.m*: simulates case studies in of 2D ocean (depth independence).
 
@@ -79,7 +79,7 @@
 
 - *update_hyd_pos.m*: calculates a new hydrophone geodesic position using the original position and position offsets given by inverse solutions.
 
-###Data
+### Data
 -h….ctd: CTD cast data
 
 -ioc_station…csv: tide data
@@ -92,7 +92,7 @@
 
 
 
-###EOF Analysis
+### EOF Analysis
 
 - *create_HOTS_EOF.m*: calculates the first 4 EOF modes for the SS at ACO
 - *create_HOTS_EOF_temp_sal.m*: script calculates the first two modes for temperature and salinity at ACO
@@ -106,7 +106,7 @@
 
 - *HEM_icListen_TTP_plot.m*: creates travel time perturbation plots of the HEM and the icListen and compare mutual data points between the two.
 
-###Etc
+### Etc
 
 - *check_tx.m*: plot transmission information
 
@@ -118,12 +118,12 @@
 
 - *PSD_HEM/PSD_icListen*: plot periodograms of acoustic receptions from HEM and icListen data
 
-##Notes:
+## Notes:
 
 Boris June 11 2019: *distance.m* is called in many scripts which is a function in Mapping Toolbox. This function replaces dist.m function which was found to produce inaccurate geodesic distances.
 
 
-##Work flow
+## Work flow
 
 1. Generating POSMV matlab file: Use read_binary.m for manually choose which POSMV binary file will be converted, or use read_binary_data_all_files.m to automatically convert all binary files in a folder to matlab data files.
 
