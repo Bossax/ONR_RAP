@@ -28,8 +28,8 @@ now_day = day(1);
 
 %% 2 Load Tx data
 % EDIT  tx file directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3
-
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 % create a set of file names
 fname = [];
 
@@ -85,8 +85,8 @@ switch string(hydrophone)
         % create a set of file names
         
       % rx file directory EDIT  
-      cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_depth
-
+%       cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_depth
+      cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
         fname = [];
         now_hour = start_hour;
         now_day = day(1);
@@ -202,8 +202,8 @@ switch string(hydrophone)
     
     case "icListen"
         % Load  icListen rx files  EDIT        
-        cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_depth
-        
+%         cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_depth
+        cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/icListen/original_depth
         % create a set of file names 
         fname = [];
         now_hour = start_hour;
