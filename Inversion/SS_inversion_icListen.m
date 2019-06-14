@@ -95,7 +95,7 @@ day = 27:30;
 start_hour = 3;
 end_hour = 14;
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'icListen');
-
+%%
 % 3.1 travel time perturbation
 ttp = (act_arrival - real(est_arrival))*3600*24*1000;
 
@@ -836,8 +836,8 @@ title(sprintf('Recovered Measurement: Median = %.2f ms, RMS = %.2f ms',med_dreco
 ylabel('Frequency')
 xlabel('msec')
 %% 9. save file
-cd /Users/testuser/Documents/MATLAB/Script/Data
-save icListen_inverse_solution_Oct_original_depth icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W
+cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file
+save icListen_inverse_solution_Oct_originaldepth icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lon tx_lat
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)

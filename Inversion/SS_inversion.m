@@ -84,10 +84,10 @@ colormap jet
 
 %% 3. Download Tx data points
 %%% June 2017
-day = 7:12;
-start_hour = 13;
-end_hour = 5;
-[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June2017(day,start_hour,end_hour);
+% day = 7:12;
+% start_hour = 13;
+% end_hour = 5;
+% [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June2017(day,start_hour,end_hour);
 
 %%% June 2018
 % day = 19:22;
@@ -114,10 +114,10 @@ end_hour = 5;
 % SNR(rm_ind) = [];
 
 %%% October 2018
-% day = 27:30;
-% start_hour = 3;
-% end_hour = 14;
-% [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
+day = 27:30;
+start_hour = 3;
+end_hour = 14;
+[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
 
 % 3.1 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -768,7 +768,7 @@ grid off
 title('Model Resolution')
 colorbar
 caxis([0 1])
-xlabel('Long')
+xlabel('Lon')
 ylabel('Lat')
 % caxis([min(P_post(:)) max(P_post(:))])
 colormap jet
@@ -871,8 +871,9 @@ set(gca,'fontsize',14)
 line([0 50],[0 0],'color','k')
 ylim([0 1])
  %% 9. Save file
- cd /Users/testuser/Documents/MATLAB/Script/Data
- save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
+ cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file
+%  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
+ save HEM_inverse_solution_Oct2018_originaldepth ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lat tx_lon
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)
