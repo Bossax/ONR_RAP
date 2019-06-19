@@ -194,7 +194,7 @@ switch string(hydrophone)
         range = range/1000;
         
         % adjust the geiod heights
-        tx_altitude = tx_altitude+2.31;
+%         tx_altitude = tx_altitude+2.31;
 %         gh = geoidheight(tx_lat,tx_lon+360);
 %         tx_altitude = tx_altitude - gh;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,7 +307,7 @@ switch string(hydrophone)
             range = range/1000;
             
             % adjust the geiod heights
-        tx_altitude = tx_altitude+2.31;
+%         tx_altitude = tx_altitude+2.31;
 %         gh = geoidheight(tx_lat,tx_lon+360);
 %         tx_altitude = tx_altitude - gh;
             
