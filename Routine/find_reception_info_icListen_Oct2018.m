@@ -178,7 +178,7 @@ while true
     
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/2nd_iteration % EDIT
+cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_position % EDIT
 % Save Variables
 rx_data.est_arrival=estimate;
 rx_data.act_arrival=act_arrival;
@@ -218,11 +218,11 @@ end
 % icListen_lon =  -158.00582401;      % 37 m east of HEM (June 2017 Position)   
 
 % Vincent's inversion result
-% icListen_lat = 22.739153;                   % June 2018 north of HEM  42.22 m nort of HEM(June 2017 Position)   
-% icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east of HEM(June 2017 Position)   
+icListen_lat = 22.739153;                   % June 2018 north of HEM  42.22 m nort of HEM(June 2017 Position)   
+icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east of HEM(June 2017 Position)   
 
-icListen_lat = 22.7391066;                   % Oct 2018  from first iteraion
-icListen_lon = -158.00610724;                % Oct 2018 from first iteraion
+% icListen_lat = 22.7391066;                   % Oct 2018  from first iteraion
+% icListen_lon = -158.00610724;                % Oct 2018 from first iteraion
 
 % icListen_lat=22.73912734;                  % March 2019 #2 
 % icListen_lon=-158.006111197;                % March 2019 
@@ -233,9 +233,10 @@ icListen_lon = -158.00610724;                % Oct 2018 from first iteraion
 %%% icListen Depth
 % icListen_depth = -4736.226+2.32;            % June 2018 (from HEM)
 % icListen_depth = -4734.646+2.32;            % March 2019 # 2
-% icListen_depth = -4729.92+2.32 +1.75;          % original depth ellipsoid height+ 1.75 m higher than HEM
-icListen_depth = -4733.24+2.32;                    %  Oct 2018 from first iteraion
- % 2. Tx File Directory
+icListen_depth = -4729.92+2.32 +1.75;          % original depth ellipsoid height+ 1.75 m higher than HEM
+% icListen_depth = -4733.24+2.32;                    %  Oct 2018 from first iteraion
+ 
+% 2. Tx File Directory
 cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3")  %% EDIT 
 
 % 3. edit CTD file in the ray traing code

@@ -185,7 +185,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/2nd_iteration
+cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -219,8 +219,8 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 % ACO_lat = 22.738894;                  % original
 % ACO_lon = -158.006009;                % original
 
-% ACO_lat = 22.738772;                  % June 2017
-% ACO_lon = -158.006186;                % June2017
+ACO_lat = 22.738772;                  % June 2017
+ACO_lon = -158.006186;                % June2017
 
 % ACO_lat= 22.738783;                  % June 2018
 % ACO_lon= -158.00619898;                % June 2018

@@ -444,6 +444,7 @@ sd_reduction_d_avg = abs((post_SD_d_avg)./prior_SD_d_avg*100);%./prior_SD1*100;
 
 %%%%%%%%%%%%%%%%  Spatially filtering the measurements  %%%%%%%%%%%%%%%%
 %% for spatial averaging
+%{
 d_new = (W*d_recov_ocean)./sum(W,2);
 %
 figure(21)
@@ -502,7 +503,7 @@ SSP_d_avg22 = F_operator*alpha20;
 % reshape the SS field
 recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 % initial_SS_d_avg=reshape(SSP_d_avg1(1:end),grid_num,grid_num)'  ;
-
+%}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
 R = 25000;
@@ -873,12 +874,13 @@ ylim([0 1])
  %% 9. Save file
  cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file
 %  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
- save HEM_inverse_solution_Oct2018_originaldepth ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lat tx_lon
+ save HEM_inverse_solution_Oct2018_originaldepth2 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lat tx_lon
 
+ SS_inversion_icListen
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)
 % load singular vaues of each mode
-cd /Users/testuser/Documents/MATLAB/Script/Data
+cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file
 load EOF_SS.mat
 var_c = (eval(['EOF_SS.singv' num2str(mode)]))^2;
 % calculate distance between pixel

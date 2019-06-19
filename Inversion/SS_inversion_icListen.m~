@@ -413,7 +413,6 @@ sd_reduction_d_avg = abs((post_SD_d_avg)./prior_SD_d_avg*100);%./prior_SD1*100;
 
 %%%%%%%%%%%%%%%%  Spatially filtering the measurements  %%%%%%%%%%%%%%%%
 %% for spatial average
-%{
 d_new = (W*d_recov_ocean)./sum(W,2);
 
 figure(21)
@@ -471,7 +470,7 @@ SSP_d_avg22 = F_operator*alpha20;
 % recalculate the SSP field
 % reshape the SS field
 recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
-%}
+
 %% 7. plot the recovered ss pertrubation field
 % draw circle
 R = 25000;
@@ -843,7 +842,7 @@ save icListen_inverse_solution_Oct_originaldepth2 icListen_lat icListen_lon icLi
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)
 % load singular vaues of each mode
-cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file
+cd /Users/testuser/Documents/MATLAB/Script/Data
 load EOF_SS.mat
 var_c = (eval(['EOF_SS.singv' num2str(mode)]))^2;
 % calculate distance between pixel

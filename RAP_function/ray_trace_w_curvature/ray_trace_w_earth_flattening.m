@@ -26,10 +26,10 @@ end
 %% 1. CTD data (MSL)
 % CTD file directory
 % cd '/Users/testuser/Documents/MATLAB/Script/Data'
-fid=fopen('h294a0202.ctd');                       % June 2017
+% fid=fopen('h294a0202.ctd');                       % June 2017
 % fid = fopen('h302a0201.ctd');                    % June 2018
 % fid = fopen('h305a0202.ctd');                       % 10 Sep 2018
-% fid=fopen('h306a0202.ctd');                       % 12 October 2018
+fid=fopen('h306a0202.ctd');                       % 12 October 2018
 % fid=fopen('h307a0202.ctd');                       % 16 November 2018
 
 D=cell2mat(textscan(fid,'%f%f%f%f%f%f%f%f','headerlines',6));
