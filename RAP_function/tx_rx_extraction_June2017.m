@@ -19,7 +19,7 @@ now_day = day(1);
 
 
 %% 2 Load POS MV Tx data
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file/
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/tx_file
 % create a set of file names
 fname = [];
 
@@ -78,7 +78,7 @@ end
 
 % Load  HEM rx files
 % create a set of file names
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/original_depth
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/rx_file/2nd_iteration
 fname = [];
 now_hour = start_hour;
 now_day = day(1);

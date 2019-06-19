@@ -16,9 +16,9 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 7:7;            %  Edit
-start_hour = 13;            %  Edit
-end_hour = 14;           % EDIT
+day = 10:12;            %  Edit
+start_hour = 2;            %  Edit
+end_hour = 5;           % EDIT
 
 
 
@@ -191,7 +191,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/original_depth
+cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/2nd_iteration
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -225,12 +225,17 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 % ACO_lat = 22.738894;                  % original
 % ACO_lon = -158.006009;                % original
 
-ACO_lat = 22.738772;                  % June 2017
-ACO_lon = -158.006186;                % June2017
+% ACO_lat = 22.738772;                  % June 2017
+% ACO_lon = -158.006186;                % June2017
+
+ACO_lat= 22.738764;                  % June 2017 1st iteration
+ACO_lon= -158.0061781;               % June 2017 
+
+
 
 %%% ACO Depth
-ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
-
+% ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+ACO_depth = - 4735.29+2.32;                 % June 2017 1st iteration
 
  % 2. Tx File Directory
 cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file %% EDIT 
@@ -314,6 +319,7 @@ end
 
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
+    
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
     [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
 end

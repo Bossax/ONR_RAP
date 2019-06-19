@@ -28,7 +28,6 @@ now_day = day(1);
 
 %% 2 Load Tx data
 % EDIT  tx file directory
-% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3
 cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 % create a set of file names
 fname = [];
@@ -85,7 +84,6 @@ switch string(hydrophone)
         % create a set of file names
         
       % rx file directory EDIT  
-%       cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_depth
       cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/2nd_iteration
         fname = [];
         now_hour = start_hour;
@@ -121,31 +119,6 @@ switch string(hydrophone)
 
         end
         
-         % correct for the reception time
-         %{
-            date_mark1= "20181028 01:00";
-            date_mark2= "20181029 01:00";
-            date_mark3= "20181030 01:00";
-            date_mark1 = datenum(date_mark1,'yyyymmdd HH:MM');
-            date_mark2 = datenum(date_mark2,'yyyymmdd HH:MM');
-            date_mark3 = datenum(date_mark3,'yyyymmdd HH:MM');
-
-            for p = 1:length(act_arrival)
-                if act_arrival(p) <= date_mark1
-                    act_arrival(p) = act_arrival(p) -4/(3600*24);
-                    est_arrival(p) = est_arrival(p) -4/(3600*24);
-                elseif (date_mark1 <= act_arrival(p))&(act_arrival(p) <= date_mark2)
-                    act_arrival(p) = act_arrival(p)-5/(3600*24);
-                    est_arrival(p) = est_arrival(p) -5/(3600*24);
-                elseif (date_mark2 <= act_arrival(p))&(act_arrival(p) <= date_mark3)
-                    act_arrival(p) = act_arrival(p)-6/(3600*24);
-                    est_arrival(p) = est_arrival(p) -6/(3600*24);
-                elseif  date_mark3 <= act_arrival(p)
-                    act_arrival(p) = act_arrival(p)-7/(3600*24);
-                    est_arrival(p) = est_arrival(p) -7/(3600*24);
-                end
-            end
-         %}
         %%%%%%%%%%%%%%%%% Clean data %%%%%%%%%%%%%%%%%%%%%%%%
         
             %%%%% HEM %%%%%%
@@ -194,7 +167,6 @@ switch string(hydrophone)
         range = range/1000;
         
         % adjust the geiod heights
-        tx_altitude = tx_altitude+2.31;
 %         gh = geoidheight(tx_lat,tx_lon+360);
 %         tx_altitude = tx_altitude - gh;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,20 +216,6 @@ switch string(hydrophone)
             %%%%%%%%%% Clean Data %%%%%%%%%%%%%%%%%%%%
             %%%%% icListen %%%%%%%
             rm_ind = [];
-            
-           % correct for the reception time
-%                         date_mark= "20181030 05:55";
-%                         date_mark = datenum(date_mark,'yyyymmdd HH:MM');
-%             
-%                         for p = 1:length(act_arrival)
-%                             if act_arrival(p) >= date_mark
-%                                 act_arrival(p) = act_arrival(p) -1/(3600*24);
-%                                 est_arrival(p) = est_arrival(p) -1/(3600*24);
-%                             else
-%                                 act_arrival(p) = act_arrival(p)+7/(3600*24);
-%                                 est_arrival(p) = est_arrival(p) +7/(3600*24);
-%                             end
-%                         end
 
             for l = 1:length(tx_t)
                 dum_arrival = act_arrival;
@@ -305,11 +263,6 @@ switch string(hydrophone)
                 range(i)=dist([icListen_lat tx_lat(i)],[icListen_lon tx_lon(i)]);
             end
             range = range/1000;
-            
-            % adjust the geiod heights
-        tx_altitude = tx_altitude+2.31;
-%         gh = geoidheight(tx_lat,tx_lon+360);
-%         tx_altitude = tx_altitude - gh;
             
     otherwise
         fprintf("Hydrophone input must be either 'HEM' or 'icListen'\n ")
