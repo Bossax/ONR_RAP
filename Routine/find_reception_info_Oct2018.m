@@ -185,7 +185,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_depth
+cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -231,8 +231,14 @@ ACO_lon = -158.006186;                % June2017
 % ACO_lat = 22.73876736;                  % March 2019 #2
 % ACO_lon= -158.00617695;                % March 2019 2
 
+ACO_lat = 22.7387643                     % Oct 2018 from original depth
+ACO_lon = -158.00617623                  % Oct 2018 from original depth
+
 %%% ACO Depth
-ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+% ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+ACO_depth = -4734.58 +2.32;            % Oct 2018 from original depth
+
+
 % ACO_depth = -4736.226+2.32;         % June 2018
 % ACO_depth = -4734.870+2.32;        % ellipsoid height
 

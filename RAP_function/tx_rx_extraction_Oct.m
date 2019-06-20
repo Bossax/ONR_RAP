@@ -28,7 +28,6 @@ now_day = day(1);
 
 %% 2 Load Tx data
 % EDIT  tx file directory
-% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3
 cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 % create a set of file names
 fname = [];
@@ -67,7 +66,7 @@ y_err = [];
 z_err = [];
 for p = 1:length(fname)
     load(fname(p))
-    tx_t = horzcat(tx_t,tx_data.t);      %TX time                                  
+    tx_t = horzcat(tx_t,tx_data.t);      %TX time
     tx_lat = horzcat(tx_lat,tx_data.lat);   %TX lat
     tx_lon = horzcat(tx_lon,tx_data.lon);
     tx_altitude = horzcat(tx_altitude,tx_data.altitude);
@@ -83,9 +82,8 @@ switch string(hydrophone)
     case  "HEM"
         % Load  HEM rx files
         % create a set of file names
-        
-      % rx file directory EDIT  
-%       cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_depth
+
+      % rx file directory EDIT
       cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
         fname = [];
         now_hour = start_hour;
@@ -120,48 +118,23 @@ switch string(hydrophone)
             SNR = horzcat(SNR ,rx_data.SNR);
 
         end
-        
-         % correct for the reception time
-         %{
-            date_mark1= "20181028 01:00";
-            date_mark2= "20181029 01:00";
-            date_mark3= "20181030 01:00";
-            date_mark1 = datenum(date_mark1,'yyyymmdd HH:MM');
-            date_mark2 = datenum(date_mark2,'yyyymmdd HH:MM');
-            date_mark3 = datenum(date_mark3,'yyyymmdd HH:MM');
 
-            for p = 1:length(act_arrival)
-                if act_arrival(p) <= date_mark1
-                    act_arrival(p) = act_arrival(p) -4/(3600*24);
-                    est_arrival(p) = est_arrival(p) -4/(3600*24);
-                elseif (date_mark1 <= act_arrival(p))&(act_arrival(p) <= date_mark2)
-                    act_arrival(p) = act_arrival(p)-5/(3600*24);
-                    est_arrival(p) = est_arrival(p) -5/(3600*24);
-                elseif (date_mark2 <= act_arrival(p))&(act_arrival(p) <= date_mark3)
-                    act_arrival(p) = act_arrival(p)-6/(3600*24);
-                    est_arrival(p) = est_arrival(p) -6/(3600*24);
-                elseif  date_mark3 <= act_arrival(p)
-                    act_arrival(p) = act_arrival(p)-7/(3600*24);
-                    est_arrival(p) = est_arrival(p) -7/(3600*24);
-                end
-            end
-         %}
         %%%%%%%%%%%%%%%%% Clean data %%%%%%%%%%%%%%%%%%%%%%%%
-        
+
             %%%%% HEM %%%%%%
             keep_ind = [];
             % find the nearest arrival time (within 20 sec)
             for l = 1:length(tx_t)
                 dum_arrival = act_arrival;
-                dum_arrival(find(dum_arrival < tx_t(l))) = [];        
-                h_ind = find((dum_arrival -tx_t(l))*3600*24 < 20);   
+                dum_arrival(find(dum_arrival < tx_t(l))) = [];
+                h_ind = find((dum_arrival -tx_t(l))*3600*24 < 20);
                 if ~isempty(h_ind)
                     keep_ind(end+1) = l;
-                    
+
                 end
             end
-            
-            
+
+
             tx_t =tx_t(keep_ind);
             tx_lat = tx_lat(keep_ind);
             tx_lon = tx_lon(keep_ind);
@@ -171,7 +144,7 @@ switch string(hydrophone)
             x_err = x_err(keep_ind);
             y_err = y_err(keep_ind);
             z_err = z_err(keep_ind);
-            
+
             rm_ind = [];
             for l = 1:length(act_arrival)
                 dum_tx_t = tx_t;
@@ -185,26 +158,25 @@ switch string(hydrophone)
             act_arrival(rm_ind) = [];
             est_arrival(rm_ind) = [];
             SNR(rm_ind) = [];
-        
-        
+
+
         %Boat distance from the hydrophone
         for i=1:length(tx_lat)
             range(i)=dist([HEM_lat tx_lat(i)],[HEM_lon tx_lon(i)]);
         end
         range = range/1000;
-        
+
         % adjust the geiod heights
-%         tx_altitude = tx_altitude+2.31;
 %         gh = geoidheight(tx_lat,tx_lon+360);
 %         tx_altitude = tx_altitude - gh;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    
+
+
     case "icListen"
-        % Load  icListen rx files  EDIT        
+        % Load  icListen rx files  EDIT
 %         cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_depth
         cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/icListen/original_depth
-        % create a set of file names 
+        % create a set of file names
         fname = [];
         now_hour = start_hour;
         now_day = day(1);
@@ -239,30 +211,16 @@ switch string(hydrophone)
             SNR  = horzcat(SNR,rx_data.SNR);
 
         end
-        
-    
+
+
             %%%%%%%%%% Clean Data %%%%%%%%%%%%%%%%%%%%
             %%%%% icListen %%%%%%%
             rm_ind = [];
-            
-           % correct for the reception time
-%                         date_mark= "20181030 05:55";
-%                         date_mark = datenum(date_mark,'yyyymmdd HH:MM');
-%             
-%                         for p = 1:length(act_arrival)
-%                             if act_arrival(p) >= date_mark
-%                                 act_arrival(p) = act_arrival(p) -1/(3600*24);
-%                                 est_arrival(p) = est_arrival(p) -1/(3600*24);
-%                             else
-%                                 act_arrival(p) = act_arrival(p)+7/(3600*24);
-%                                 est_arrival(p) = est_arrival(p) +7/(3600*24);
-%                             end
-%                         end
 
             for l = 1:length(tx_t)
                 dum_arrival = act_arrival;
                 dum_arrival(find(dum_arrival < tx_t(l))) = [];
-                % if greater than 20 sec = no reception was picked up 
+                % if greater than 20 sec = no reception was picked up
                 h_ind = find((tx_t(l) - dum_arrival)*3600*24 > -20);
                 if isempty(h_ind)
                     rm_ind(end+1) = l;
@@ -279,13 +237,13 @@ switch string(hydrophone)
             x_err = x_err(keep_ind);
             y_err = y_err(keep_ind);
             z_err = z_err(keep_ind);
-            
+
 
             rm_ind = [];
             for l = 1:length(act_arrival)
                 dum_tx_t = tx_t;
                  dum_tx_t(find( dum_tx_t > act_arrival(l))) = [];
-                % if greater than 20 sec = no reception was picked up 
+                % if greater than 20 sec = no reception was picked up
                 h_ind = find((act_arrival(l) - dum_tx_t)*3600*24 < 20);
                 if isempty(h_ind)
                     rm_ind(end+1) = l;
@@ -298,19 +256,14 @@ switch string(hydrophone)
 
             act_trtime = (act_arrival-tx_t)*3600*24;
             est_trtime= (est_arrival-tx_t)*3600*24;
-            
+
             % Vessel Surface Distance
-            
+
             for i=1:length(tx_lat)
                 range(i)=dist([icListen_lat tx_lat(i)],[icListen_lon tx_lon(i)]);
             end
             range = range/1000;
-            
-            % adjust the geiod heights
-%         tx_altitude = tx_altitude+2.31;
-%         gh = geoidheight(tx_lat,tx_lon+360);
-%         tx_altitude = tx_altitude - gh;
-            
+
     otherwise
         fprintf("Hydrophone input must be either 'HEM' or 'icListen'\n ")
     end

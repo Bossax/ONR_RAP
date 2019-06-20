@@ -16,8 +16,8 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 27:27;            %  Edit
-hour = 3:4;            %  Edit
+day = 27:30;            %  Edit
+hour = 3:14;            %  Edit
 
 %%  Bandpass filter for icListen 2000 Hz to 6000 Hz
 fl = 2000;
@@ -178,14 +178,14 @@ while true
     
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_depth % EDIT
+cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_position % EDIT
 % Save Variables
-% rx_data.est_arrival=estimate;
-% rx_data.act_arrival=act_arrival;
-% rx_data.SNR=SNR;
-% sname =wav_name(1:end-6);
-% sname = ['rx_data' '_20' sname(11:12) '_' sname(13:14) '_' sname(15:16) '_' sname(18:19) '_icListen']
-% save(sname,'rx_data')
+rx_data.est_arrival=estimate;
+rx_data.act_arrival=act_arrival;
+rx_data.SNR=SNR;
+sname =wav_name(1:end-6);
+sname = ['rx_data' '_20' sname(11:12) '_' sname(13:14) '_' sname(15:16) '_' sname(18:19) '_icListen']
+save(sname,'rx_data')
 
 % update day and hour for the next hour file
 if now_hour < 23
@@ -220,7 +220,10 @@ end
 % Vincent's inversion result
 icListen_lat = 22.739153;                   % June 2018 north of HEM  42.22 m nort of HEM(June 2017 Position)   
 icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east of HEM(June 2017 Position)   
- 
+
+% icListen_lat = 22.7391066;                   % Oct 2018  from first iteraion
+% icListen_lon = -158.00610724;                % Oct 2018 from first iteraion
+
 % icListen_lat=22.73912734;                  % March 2019 #2 
 % icListen_lon=-158.006111197;                % March 2019 
 
@@ -231,8 +234,9 @@ icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east
 % icListen_depth = -4736.226+2.32;            % June 2018 (from HEM)
 % icListen_depth = -4734.646+2.32;            % March 2019 # 2
 icListen_depth = -4729.92+2.32 +1.75;          % original depth ellipsoid height+ 1.75 m higher than HEM
-
- % 2. Tx File Directory
+% icListen_depth = -4733.24+2.32;                    %  Oct 2018 from first iteraion
+ 
+% 2. Tx File Directory
 cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3")  %% EDIT 
 
 % 3. edit CTD file in the ray traing code
@@ -301,8 +305,7 @@ est_arrival = tx_t+(est_tt./(3600*24));
  date_mark1 = datenum(date_mark1,'yyyymmdd HH:MM');
  
  if time <= date_mark1
-%      time_offset =  -7/(3600*24); % 7 secbehind
-    time_offset =  -32/(3600*24); % 32 sec behind
+     time_offset =  -7/(3600*24); % 7 secbehind
      
  else
      time_offset = 1/(3600*24);
