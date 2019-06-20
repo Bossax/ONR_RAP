@@ -19,6 +19,12 @@ tx_lat_HEM = tx_lat;
 tx_lon_HEM = tx_lon;
 d_HEM = (act_arrival-est_arrival)*3600*24;
 
+% Load an tx rx file: June 2017 (HEM)
+[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June2017(7:12,13,5);
+tx_lat_HEM2= tx_lat;
+tx_lon_HEM2= tx_lon;
+d_HEM2 = (act_arrival-est_arrival)*3600*24;
+
 % Load an tx rx file: October 2018 (HEM)
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(27:30,3,14,'icListen');
 tx_lat_ic= tx_lat;
@@ -29,37 +35,62 @@ d_ic= (act_arrival-est_arrival)*3600*24;
 
 f1 = figure(1);
 s1 = scatter(tx_lon_HEM,tx_lat_HEM);
-color_range = [-1 5];
+color_range = [-3 3];
 fpos = [0 0.2];
-plot_RAP_txmap(f1,s1,'Measurments (HEM)',color_range,d_HEM,fpos);
+plot_RAP_txmap(f1,s1,'HEM Measurments (October 2018)',color_range,d_HEM,fpos);
 
+f2 = figure(2);
+s1 = scatter(tx_lon_HEM2,tx_lat_HEM2);
+color_range = [-3 3];
+fpos = [0.4 0.2];
+plot_RAP_txmap(f2,s1,'HEM Measurments (June 2017)',color_range,d_HEM2,fpos);
+
+f3 = figure(3);
 s2 = scatter(tx_lon_ic,tx_lat_ic);
-color_range = [-1 5];
-fpos = [0 0.2];
-plot_RAP_txmap(f1,s1,'Measurments (HEM)',color_range,d_HEM,fpos);
-
+color_range = [-3 3];
+fpos = [0.6 0.2];
+plot_RAP_txmap(f3,s2,'icListen Measurments (October 2018)',color_range,d_ic,fpos);
 
 %% Set up transects
 % Lat = 22.73-22.75
 % Lon = -157.8 ? -158.30
 % L = resampling data factor (downsampling)
 % HEM
+%% October 2018
 % 1. zonal
 L = 5;  % downsampling factor
 lat_range = [22.735 22.745];
 lon_range = [-158.3 -157.7];
-[ttp_HEM1,tx_lat_HEM1,tx_lon_HEM1] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lat');
+[ttp_HEMz_Oct2018,tx_lat_HEMz_Oct2018,tx_lon_HEMz_Oct2018] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lat');
 % 2. meridional
 L = 4;  % downsampling factor
 lat_range = [22.48 23];
 lon_range = [-158.01 -158];
-[ttp_HEM2,tx_lat_HEM2,tx_lon_HEM2] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lon');
+[ttp_HEMm_Oct2018,tx_lat_HEMm_Oct2018,tx_lon_HEMm_Oct2018] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lon');
 
 % 3. 2-D
 L = 10;  % downsampling factor
 lat_range = [22.48 23];
 lon_range = [-158.3 -157.7];
-[ttp_HEM_2D,tx_lat_HEM_2D,tx_lon_HEM_2D] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lat');
+[ttp_HEM_2D_Oct2018,tx_lat_HEM_2D_Oct2018,tx_lon_HEM_2D_Oct2018] = select_sample(d_HEM,tx_lat_HEM,tx_lon_HEM,lat_range,lon_range,L,'lat');
+
+%% June 2017
+% 1. zonal
+L = 14;  % downsampling factor
+lat_range = [22.735 22.745];
+lon_range = [-158.3 -157.7];
+[ttp_HEMz_June2017,tx_lat_HEMz_June2017,tx_lon_HEMz_June2017] = select_sample(d_HEM2,tx_lat_HEM2,tx_lon_HEM2,lat_range,lon_range,L,'lat');
+% 2. meridional
+L = 12;  % downsampling factor
+lat_range = [22.48 23];
+lon_range = [-158.01 -158];
+[ttp_HEMm_June2017,tx_lat_HEMm_June2017,tx_lon_HEMm_June2017] = select_sample(d_HEM2,tx_lat_HEM2,tx_lon_HEM2,lat_range,lon_range,L,'lon');
+
+% 3. 2-D
+L = 13;  % downsampling factor
+lat_range = [22.48 23];
+lon_range = [-158.3 -157.7];
+[ttp_HEM_2D_June2017,tx_lat_HEM_2D_June2017,tx_lon_HEM_2D_June2017] = select_sample(d_HEM2,tx_lat_HEM2,tx_lon_HEM2,lat_range,lon_range,L,'lat');
 
 %% icListen
 % 1. zonal
@@ -86,27 +117,48 @@ lon_range = [-158.3 -157.7];
 % In the inner loop, loop over data points located to the east of the first point. Calculate gamma, and separation distance in meters.
 % Create separation bins
 % Group gamma values by separation bins and average them out
-%% HEM:
+%% HEM: October 2018
 %% 1. Zonal Transect
-bin_num = 50;
+bin_num = 80;
 
-plot_variogram(ttp_HEM1,tx_lat_HEM1,tx_lon_HEM1,bin_num,'isotropic')
+plot_variogram(ttp_HEMz_Oct2018,tx_lat_HEMz_Oct2018,tx_lon_HEMz_Oct2018,bin_num,'isotropic')
 
 %% 2. Meridional Transect
-bin_num = 50;
+bin_num = 80;
 
-plot_variogram(ttp_HEM2,tx_lat_HEM2,tx_lon_HEM2,bin_num,'isotropic')
+plot_variogram(ttp_HEMm_Oct2018,tx_lat_HEMm_Oct2018,tx_lon_HEMm_Oct2018,bin_num,'isotropic')
 
 %% 3. Horizontal
-bin_num = 50;
+bin_num = 80;
 
-plot_variogram(ttp_HEM_2D,tx_lat_HEM_2D,tx_lon_HEM_2D,bin_num,'isotropic')
+plot_variogram(ttp_HEM_2D_Oct2018,tx_lat_HEM_2D_Oct2018,tx_lon_HEM_2D_Oct2018,bin_num,'isotropic')
+%% 4. Anisotropic
+bin_num = 80;
+
+plot_variogram(ttp_HEM_2D_Oct2018,tx_lat_HEM_2D_Oct2018,tx_lon_HEM_2D_Oct2018,bin_num,'anisotropic')
+
+%% HEM: June 2017
+%% 1. Zonal Transect
+bin_num = 70;
+
+plot_variogram(ttp_HEMz_June2017,tx_lat_HEMz_June2017,tx_lon_HEMz_June2017,bin_num,'isotropic')
+
+
+%% 2. Meridional Transect
+bin_num = 70;
+
+plot_variogram(ttp_HEMm_June2017,tx_lat_HEMm_June2017,tx_lon_HEMm_June2017,bin_num,'isotropic')
+
+%% 3. Horizontal
+bin_num = 70;
+
+plot_variogram(ttp_HEM_2D_June2017,tx_lat_HEM_2D_June2017,tx_lon_HEM_2D_June2017,bin_num,'isotropic')
+
 
 %% 4. Anisotropic
-bin_num = 50;
+bin_num = 70;
 
-plot_variogram(ttp_HEM_2D,tx_lat_HEM_2D,tx_lon_HEM_2D,bin_num,'anisotropic')
-
+plot_variogram(ttp_HEM_2D_June2017,tx_lat_HEM_2D_June2017,tx_lon_HEM_2D_June2017,bin_num,'anisotropic')
 
 %% icListen
 %% 1. Zonal Transect
@@ -120,15 +172,17 @@ bin_num = 80;
 plot_variogram(ttp_ic2,tx_lat_ic2,tx_lon_ic2,bin_num,'isotropic')
 
 %% 3. Horizontal
-bin_num = 50;
+bin_num = 80;
 
 plot_variogram(ttp_ic_2D,tx_lat_ic_2D,tx_lon_ic_2D,bin_num,'isotropic')
+
 %% 4. Anisotropic
 bin_num = 80;
 
 plot_variogram(ttp_ic_2D,tx_lat_ic_2D,tx_lon_ic_2D,bin_num,'anisotropic')
+
 %% Function
-% 1. Select data samples
+% 1.  Select data samples
 function [ttp,tx_lat_s,tx_lon_s] = select_sample(d,tx_lat,tx_lon,lat_range,lon_range,L,fixed_axis)
 Llon = lon_range(1);
 Ulon = lon_range(2);
@@ -157,7 +211,7 @@ f3 = figure;
 clf
 subplot(1,2,1)
 s3 = scatter(tx_lon_s,tx_lat_s);
-color_range = [-1 5];
+color_range = [-4 4];
 fpos = [0.1 0.6];
 color_data = ttp;
 set(f3,'Units','normalized','Position',[fpos 0.6 0.4])
@@ -191,15 +245,30 @@ ylim(color_range)
 set(gca,'fontsize',14)
 title('Measurement Samples HEM: zonal transect','fontsize',16)
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 2. Variogram
-function plot_variogram(ttp,tx_lat,tx_lon,bin_num,type)
+
+ 
+% 2.  Variogram
 % Create experimental (semi)variogram
-% Pairing 2 data points
-% 1. In the outer loop, fix the first point, starting from the western end to the eastern end.
-% 2. In the inner loop, loop over data points located to the east of the first point. Calculate gamma, and separation distance in meters.
-% 3. Create separation bins
-% 4. Group gamma values by separation bins and average them out
+% Isotropic
+% 1. In the outer loop, fix the head point, starting from the western end to the eastern end.
+% 2. In the inner loop, loop over data points located to the east of the head point. Calculate separation distance and assign a lag bin in which the separation distance lies.
+% 3. Calculate raw variogram. Add gamma value to the assigned bin (gamma). Count the number of pairs fall into each bin (Nk)
+% 4. Add gamma value vector to the total ex_gamma vector at the end of each head point loop
+% 5. Average each bin of ex_gamma by its corresponding number of pairs 
+% 
+% Anisotropic
+% 1.  Set up 2 horizontal major and minor axes (now zonal and meridional axes)
+% 2.  Set up search pattern reference illustration: http://geostatisticslessons.com/lessons/variogramparameters
+% 3.  Loop over all samples. Start with fixing a head sample of each loop.
+% 4   After fixing a head sample, loop over all lag bins. Search for all tail possible tail samples fall into the current lag bin.
+% 5. Use azimuth tolerance criterion to eliminate outside tail samples
+% 6. Use bandwidth criterion to eliminate outside tail samples
+% 7. Check if the pair of the head and tail samples has been used in the previous loops
+% 8.  When paired, record the indices of paired data points (avoiding using redundant data pairs)
+% 9. After calculating all raw variogram, average each gamma value by its corresponding number of pairs
+% 10. repeat the same process but on the other principal axis    
+
+function plot_variogram(ttp,tx_lat,tx_lon,bin_num,type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sill = var(ttp);
 
@@ -253,7 +322,7 @@ switch type
         xlabel('h')
         ylabel('\gamma(h)')
         xlim([0 domain_size/2])             % limit to 1/2 domain size
-        ylim([0 2*sill])
+        ylim([0 2.5*sill])
         title(sprintf('Experimental Variogram:\n Lag Distance = %.1f km',lag_distance/1000))
         set(gca,'fontsize',14)
         hold on
@@ -262,6 +331,7 @@ switch type
         % plot range
         line([range range],[0 sill],'Color','r','LineStyle','--')
         text(range,sill/2,sprintf('Range = %.1f km',range),'FontSize',12)
+        text(1,sill+0.03,'\sigma^{2}','fontsize',16)
         
     case 'anisotropic'
         % 1. zonal (Easting)
@@ -281,18 +351,19 @@ switch type
         % Plot Zonal Variogram
         ex_gamma_zonal = sum(ex_gamma_zonal)./sum(Nk_zonal);
         
-        figure(888);
+        figure;
         
         s1 = scatter(lag_bin/1000,ex_gamma_zonal,'xb');
         hold on
         line([lag_bin(1) lag_bin(end)]./1000,[sill sill],'Color','black')
-        ylim([0 2*sill])
+        ylim([0 2.5*sill])
         xlim([min(lag_bin)/1000 max(lag_bin)/1000*0.5])
         grid on
         xlabel('h (km)')
         ylabel('\gamma(h)')
         legend('Zonal')
         var_az = gca;
+        text(1,sill+0.03,'\sigma^{2}','fontsize',16)
         
         % 2. Meridional (Northing)
         % search pattern
@@ -313,6 +384,9 @@ switch type
         hold on
         s2 = scatter(var_az,lag_bin/1000,ex_gamma_merdional,'*g');
         legend([s1,s2],{'Zonal','Meridional'})
+        set(gca,'FontSize',14)
+        title('Horizontal Variogram')
+        
         
 %         cd /Users/testuser/Documents/ONR_RAP/Data
 %         fname = "variogram_"+num2str(sample)
@@ -321,7 +395,7 @@ switch type
         
 end % switch
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % 3. pairing
 function  [ex_variogram,Nk] = pairing(sample,ttp,tx_lat,tx_lon,lag_bin,bin_num,bandwidth,azmth,azmth_tol)
     % initialize parameters
@@ -330,7 +404,6 @@ function  [ex_variogram,Nk] = pairing(sample,ttp,tx_lat,tx_lon,lag_bin,bin_num,b
     paired_num = [];                           % paired data point
    
 for ii = 1:sample
-    ii
       
     % 1st data point coordinate
     lon_head = tx_lon(ii);
@@ -536,6 +609,7 @@ end % for all samples
 fprintf('Total Pairs = %d, All possible pairs = %d: = %d %',length(paired_num),sample*(sample-1)/2,length(paired_num)/(sample*(sample-1)/2)*100);
 
 end
+
 
 
 
