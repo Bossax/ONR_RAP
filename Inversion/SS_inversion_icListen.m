@@ -160,7 +160,7 @@ theta_r = zeros(1,length(tx_lon));  % received ray angle
 for iii=1:length(tx_lon)
     iii
     % find pixels and the distance in each pixel
-    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,~,z]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,1);
+    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,intd_G_all1,z,SS,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,1);
     [G_of_nray2,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,2);
     [G_of_nray3,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,3);
     [G_of_nray4,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,4);
@@ -174,6 +174,7 @@ for iii=1:length(tx_lon)
     M(iii) = length(total_pixel_num)-1;
 end 
 %%
+cl = SS(1);  cr = SS(end);  
 G1 = real(G1);
 G2 = real(G2);
 G3 = real(G3);
@@ -182,6 +183,7 @@ Ghyd = real(Ghyd);
 G = [G1 G2 G3 G4 Ghyd];
 % G = [G1 Ghyd];
 %% plot elements og the observation matrix
+%{
 figure(4)
 subplot(4,1,1)
 plot(1:tot_grid_num,sum((G1),1))
@@ -209,7 +211,7 @@ ylabel('meter')
 xlabel('pixel')
 xlim([1 tot_grid_num])
 title('Obserbvation Matrix of the third mode')
-
+%}
 %{
 subplot(4,1,4)
 plot(1:3,sum((Ghyd),1))
@@ -226,7 +228,8 @@ title('Obserbvation Matrix of the hydrophne position offsets')
 % measurement matrix (TTP matrix)
 d = ttp'/1000;   % s
 % travel time perturbation error
-Cd = data_error_matrix(x_err,y_err,z_err,tx_lat,tx_lon,tx_heading,theta_l,theta_r,SNR,icListen_lat,icListen_lon,icListen_depth);
+Cd = data_error_matrix(x_err,y_err,z_err,tx_lat,tx_lon,tx_heading,theta_l,theta_r,SNR,cl,cr,icListen_lat,icListen_lon,icListen_depth);
+
 Cd = diag(real(Cd));
 
 
