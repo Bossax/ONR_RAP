@@ -49,27 +49,22 @@ temp = D(:,2);        %temperature
 sal = D(:,3);         %salinity (Sp)
 sal = gsw_SA_from_SP(sal,pres_MSL,ACO_lon,ACO_lat);
 
-ACO_GH = geoidheight(ACO_lat,ACO_lon+360,'EGM96');
 % Depths in the ellipsoidal coordinate 
 z_td = -td_h;
-z_hyd = -ACO_depth-ACO_GH;      
+z_hyd = -ACO_depth;      
 
 
 %% 2 truncate CTD data to fit the range between the receiver depth and the source depth
 % on the ellipsoidal surface Orthometrc height
 
 % Here ignore the change in geoid height along the ray path 
-% since the absolute change in geoid height within one layer of the ocean is small relative to the layer depth (~2m)
-% Only the starting depth in the first layer has to be in correspondsance
-% with the geoid height of the transmission location
-
-% geoid height at the transmission location
+% since the absolute change in geoid height when 
+% geoid height
 gh = geoidheight(tx_lat,tx_lon+360,'EGM96');
 
 % N_mean = 2.32;                                      % average geiod height over the area of coverage 
 % z_CTD = -gsw_z_from_p(pres_MSL,ACO_lat) + N_mean); % from MSL to ellipsoid
-
-z_CTD = -(gsw_z_from_p(pres_MSL,ACO_lat)+gh);             % from MSL to ellipsoid with variable GH
+z_CTD = -gsw_z_from_p(pres_MSL,ACO_lat);             % relative to MSL
 
 % 2.1 truncate the upper bound using transducer depth
 rm_ind = find(z_CTD<=z_td);

@@ -16,8 +16,8 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 10:12;            %  Edit
-start_hour = 2;            %  Edit
+day = 7:12;            %  Edit
+start_hour = 13            %  Edit
 end_hour = 5;           % EDIT
 
 
@@ -191,7 +191,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/2nd_iteration
+cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/original_depth_raytrace_varGH
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -234,7 +234,7 @@ ACO_lon = -158.006186;                % June2017
 
 
 %%% ACO Depth
-ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+ACO_depth = -4729.92;                         % original depth MSL
 % ACO_depth = - 4735.29+2.32;                 % June 2017 1st iteration
 
  % 2. Tx File Directory
