@@ -1,4 +1,4 @@
-function [obs_ray,total_pixel_num,theta_l,theta_r,intd_G,z_cross,intd_G_all,z,SS_priori,r_layer]=obs_matrix(tx_lat,tx_lon,tx_altitude,ACO_lat,ACO_lon,ACO_depth,x_tick,y_tick,mode,type,EOF_plot)
+function [obs_ray,total_pixel_num,theta_l,theta_r,intd_G,z_cross,intd_G_all,z,SS_priori,r_layer]=obs_matrix(tx_lat,tx_lon,tx_altitude,ACO_lat,ACO_lon,ACO_depth,x_tick,y_tick,mode,month,year,type,EOF_plot)
 %  oberservation_matrix construction
 % 1. Find the surface distance of an acoustic ray travels within one pixel
 % 2. match the surface distance with the ray tracing calcluation to divide the ray path into pixel-wise arc lengths
@@ -263,7 +263,7 @@ if length(pixel_num_x)~=0 && length(pixel_num_y)~=0
 x_dist = tot_sep;
 % azmth = azimuth(tx_lat,tx_lon,ACO_lat,ACO_lon);
 azmth = az;
-[arc_lengths,tot_arclength,theta0,SS_priori,z,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(x_dist,tx_altitude,tx_lat,azmth,ACO_lat,ACO_lon,ACO_depth);
+[arc_lengths,tot_arclength,theta0,SS_priori,z,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(x_dist,tx_altitude,tx_lat,azmth,ACO_lat,ACO_lon,ACO_depth,month,year);
 cl = SS_priori(1);
 cr = SS_priori(end);
 

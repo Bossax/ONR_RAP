@@ -1,4 +1,4 @@
-function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth)
+function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth,month,year)
 %%%%% Functions %%%%%%%%%%
 % 1. ctd file
 % 2. sound speed calculation function gsw_sound_speed
@@ -26,11 +26,20 @@ end
 %% 1. CTD data (MSL)
 % CTD file directory
 % cd '/Users/testuser/Documents/MATLAB/Script/Data'
-% fid=fopen('h294a0202.ctd');                       % June 2017
-% fid = fopen('h302a0201.ctd');                    % June 2018
-% fid = fopen('h305a0202.ctd');                       % 10 Sep 2018
-fid=fopen('h306a0202.ctd');                       % 12 October 2018
-% fid=fopen('h307a0202.ctd');                       % 16 November 2018
+if year == '2017'
+    fid=fopen('h294a0202.ctd');                       % June 2017
+elseif year == '2018'
+    switch month
+        case 'Jun'
+            fid = fopen('h302a0201.ctd');                    % June 2018
+        case 'Sep'
+            fid = fopen('h305a0202.ctd');                       % 10 Sep 2018
+        case 'Oct'
+            fid=fopen('h306a0202.ctd');                       % 12 October 2018
+        case 'Nov'
+            fid=fopen('h307a0202.ctd');                       % 16 November 2018
+    end
+end
 
 D=cell2mat(textscan(fid,'%f%f%f%f%f%f%f%f','headerlines',6));
 fclose(fid);

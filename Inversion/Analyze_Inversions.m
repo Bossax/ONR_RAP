@@ -96,7 +96,7 @@ azmth = ones(length(tx_lat),1);
 % 0-360
 
 for i=1:length(tx_lat)
-    azmth(i) = azimuth(icListen_lat,icListen_lon,tx_lat(i),tx_lon(i));
+    azmth(i) = azimuth(ACO_lat,ACO_lon,tx_lat(i),tx_lon(i));
 end
 theta = tx_heading';
 theta = tx_heading' - azmth;
@@ -107,6 +107,10 @@ for i = 1:length(theta)
    end
     
 end
+% Plot hydrophone offset and ocean perturbation 
+d_recov_ocean = G(:,1:end-3)*m_recov(1:end-3);
+d_recov_hyd = G(:,end-2:end)*m_recov(end-2:end);
+d_recov = G*m_recov;
 
 % plot reconstructed measurement from ocean perturbations
 figure(3)
@@ -125,10 +129,7 @@ ylabel('Lat')
 set(gca,'fontsize',13)
 caxis([-3  3])
 
-% Plot hydrophone offset and ocean perturbation 
-d_recov_ocean = G(:,1:end-3)*m_recov(1:end-3);
-d_recov_hyd = G(:,end-2:end)*m_recov(end-2:end);
-d_recov = G*m_recov;
+
 figure(4)
 set(gcf,'Units','normalized','Position',[0.4 0.5 0.4 0.8])
 subplot(3,1,1)
@@ -174,3 +175,22 @@ title('Reconstructed Measurements (icListen)')
 set(gca,'fontsize',12)
 cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
+
+%% Hydrophone offset azimuth dependence
+figure
+scatter(azmth,d_recov_hyd*1000,[],range,'filled')
+grid on
+xticks(0:60:360)
+xticks(0:30:360)
+xlim([0 360])
+title('Hydrophone Offset Travel Time Perturbation')
+xlabel('Azimuth')
+ylabel('TTP (ms)')
+set(gca,'fontsize',15)
+c = colorbar;
+c.Label.String = 'Range (km)';
+c.Ticks = 0:5:30;
+caxis([0 30])
+colormap jet
+
+

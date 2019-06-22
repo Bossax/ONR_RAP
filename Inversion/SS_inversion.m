@@ -24,7 +24,7 @@ ACO_depth = -4727.6;                 % Original depth
 
 % Initialize the domain
 L = 60000;      % meter EDIT
-grid_num = 25;  % grid_num x grid_num  pixels EDIT
+grid_num = 49;  % grid_num x grid_num  pixels EDIT
 tot_grid_num = grid_num^2;
 
 [~,lat_u,~] = m_fdist(ACO_lon,ACO_lat,0,L);
@@ -84,12 +84,16 @@ colormap jet
 
 %% 3. Download Tx data points
 %%% June 2017
-% day = 7:12;
-% start_hour = 13;
-% end_hour = 5;
-% [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June2017(day,start_hour,end_hour);
+month = 'Jun'
+year = '2017'
+day = 7:12;
+start_hour = 13;
+end_hour = 5;
+[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June2017(day,start_hour,end_hour);
 
 %%% June 2018
+% month = 'Jun'
+% year = '2018'
 % day = 19:22;
 % start_hour = 23;
 % end_hour = 23;
@@ -114,10 +118,14 @@ colormap jet
 % SNR(rm_ind) = [];
 
 %%% October 2018
-day = 27:30;
-start_hour = 3;
-end_hour = 14;
-[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
+% month = 'Oct'
+% year = '2018'
+% day = 27:30;
+% start_hour = 3;
+% end_hour = 14;
+% [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
+
+
 
 % 3.1 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -181,10 +189,10 @@ for iii=1:length(tx_lon)
     iii
     % find pixels and the distance in each pixel
     
-    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,intd_G_all1,z,SS,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,1);
-    [G_of_nray2,~,~,~,intd_G2,~,intd_G_all2,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,2);
-    [G_of_nray3,~,~,~,intd_G3,~,intd_G_all3,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,3);
-    [G_of_nray4,~,~,~,intd_G4,~,intd_G_all4,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,4);
+    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,intd_G_all1,z,SS,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,1,month,year);
+    [G_of_nray2,~,~,~,intd_G2,~,intd_G_all2,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,2,month,year);
+    [G_of_nray3,~,~,~,intd_G3,~,intd_G_all3,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,3,month,year);
+    [G_of_nray4,~,~,~,intd_G4,~,intd_G_all4,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),ACO_lat,ACO_lon,ACO_depth,x_node,y_node,4,month,year);
     [G_of_hyd] = obs_matrix_hyd(tx_lat(iii),tx_lon(iii),tx_altitude(iii),theta_r(iii),ACO_lat,ACO_lon,ACO_depth);
     % form matrix G
     G1(iii,:) = G_of_nray1;
@@ -205,6 +213,7 @@ Ghyd = real(Ghyd);
 G = [G1 G2 G3 G4 Ghyd];
 
 %% plot elements of the observation matrix
+%{
 figure(4)
 subplot(4,1,1)
 plot(1:tot_grid_num,sum((G1),1))
@@ -242,7 +251,7 @@ xlabel('pixel')
 xlim([1 tot_grid_num])
 title('Obserbvation Matrix of the third mode')
 
-%{
+
 % subplot(4,1,4)
 % plot(1:3,sum((Ghyd),1))
 % % xticks(1:10:tot_grid_num)
@@ -264,6 +273,7 @@ Cd = real(diag(Cd));
 
 
 % form a filter matrix
+%{
 W = zeros(length(d),length(d));
 for iii = 1:length(d)
     iii
@@ -274,7 +284,7 @@ for iii = 1:length(d)
 end
         
 W = W+W'-diag(diag(W));
-
+%}
 %% pre-spatially filter d (before inversion)
 % for spatial average
 %{
@@ -328,7 +338,7 @@ Res_mat3 = Res_mat(2*tot_grid_num+1:3*tot_grid_num,2*tot_grid_num+1:3*tot_grid_n
 Res_mat4 = Res_mat(3*tot_grid_num+1:4*tot_grid_num,3*tot_grid_num+1:4*tot_grid_num);
 Res_mat_p  = Res_mat(4*tot_grid_num+1:4*tot_grid_num+3,4*tot_grid_num+1:4*tot_grid_num+3);
 
-% 6.5 Posteriori covariance
+%% 6.5 Posteriori covariance
 % Posteriori covariance
 P_post = round((eye(tot_grid_num*4+3)-G_geninv*G)*P,10,'significant');
 P_post_triu = triu(P_post);
@@ -413,8 +423,8 @@ f2_avg = sum(f2(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 f3_avg = sum(f3(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 f4_avg = sum(f4(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 
-% depth averaging and mode combining operator
-F_operator = [diag(ones(1,625)*f1_avg) diag(ones(1,625)*f2_avg) diag(ones(1,625)*f3_avg) diag(ones(1,625)*f4_avg)];
+%% depth averaging and mode combining operator
+F_operator = [diag(ones(1,grid_num^2)*f1_avg) diag(ones(1,grid_num^2)*f2_avg) diag(ones(1,grid_num^2)*f3_avg) diag(ones(1,grid_num^2)*f4_avg)];
 
 SSP_d_avg2 = F_operator*alpha0;
 P_prior_d_avg = F_operator*P(1:end-3,1:end-3)*F_operator';
@@ -791,8 +801,9 @@ percent_g_data =  good_data/length(norm_res)*100;
 title(sprintf('Normalized Residual Median: %.3f, RMS: %.3f',median(residual),rms_res))
 set(gca,'fontsize',12)
 annotation('textbox',[.6 .8 0.1 .1],'String',[sprintf('%.2f',percent_g_data) '% of data is within +/-1'],'fontsize',11,'background','white');
-line([1 1],[0 1000],'color','red')
-line([-1 -1],[0 1000],'color','red')
+line([1 1],[0 3500],'color','red')
+line([-1 -1],[0 3500],'color','red')
+ylim([0 3500])
 %% Histogram
 edges = -10.1:.2:10.1;
 counts = -10:0.2:10;
@@ -854,7 +865,7 @@ xlim([0 30])
 xlabel('Range (km)')
 ylabel('Resolution')
 legend('Mode1','Mode2','Mode3','Mode4')
-title('Resolution versus Range (Covariance Length = 20km)')
+title('Resolution versus Range (Covariance Length = 8km)')
 set(gca,'fontsize',14)
 
 
@@ -867,16 +878,16 @@ scatter(sur_dist/1000,res_d_avg,'b*')
 xlim([0 30])
 xlabel('Range (km)')
 ylabel('Resolution')
-title({'Resolution versus Range: Depth-averaged solution',' (Correlation Length = 20 km)'})
+title({'Resolution versus Range: Depth-averaged solution',' (Correlation Length = 8 km)'})
 set(gca,'fontsize',14)
 line([0 50],[0 0],'color','k')
 ylim([0 1])
  %% 9. Save file
  cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file
 %  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
- save HEM_inverse_solution_Oct2018_originaldepth2 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lat tx_lon
+ save HEM_inverse_solution_Oct2018_originaldepth_L20km_sizing_2 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon
 
- SS_inversion_icListen
+ 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)
 % load singular vaues of each mode
@@ -894,6 +905,7 @@ y_matrix=reshape(repmat(y,len,1),1,len*len);
 
 % Gaussian cov length
 sigma = 20000;
+% sigma = 8000;   % correlation length from Jun3 2017 data (Variogram result)
 
 for ii=1:size(x_matrix,2) % pixel number
     for jj=ii:size(x_matrix,2) % the second pixel
