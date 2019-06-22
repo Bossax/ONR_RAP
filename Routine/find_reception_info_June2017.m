@@ -225,17 +225,17 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 % ACO_lat = 22.738894;                  % original
 % ACO_lon = -158.006009;                % original
 
-% ACO_lat = 22.738772;                  % June 2017
-% ACO_lon = -158.006186;                % June2017
+ACO_lat = 22.738772;                  % June 2017
+ACO_lon = -158.006186;                % June2017
 
-ACO_lat= 22.738764;                  % June 2017 1st iteration
-ACO_lon= -158.0061781;               % June 2017 
+% ACO_lat= 22.738764;                  % June 2017 1st iteration
+% ACO_lon= -158.0061781;               % June 2017 
 
 
 
 %%% ACO Depth
-% ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
-ACO_depth = - 4735.29+2.32;                 % June 2017 1st iteration
+ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+% ACO_depth = - 4735.29+2.32;                 % June 2017 1st iteration
 
  % 2. Tx File Directory
 cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file %% EDIT 
@@ -316,12 +316,13 @@ for ii=1:length(tx_lat)
     x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon,referenceEllipsoid('WGS84'));
 end
 
+month = 'Jun';
+year = '2017'
 
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
-    
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,month,year);
 end
 
 %Estimate arrival time
