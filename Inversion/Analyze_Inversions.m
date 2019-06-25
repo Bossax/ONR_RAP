@@ -177,7 +177,13 @@ cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
 
 %% Hydrophone offset azimuth dependence
-figure
+if ~exist('f_azimuth','var')
+    f_azimuth = figure('Name','azimuth');
+else
+    f_azimuth; clf;
+end
+set(gcf,'Units','normalized','Position',[0 0.5 0.7 0.4])
+subplot(1,2,1)
 scatter(azmth,d_recov_hyd*1000,[],range,'filled')
 grid on
 xticks(0:60:360)
@@ -186,7 +192,23 @@ xlim([0 360])
 title('Hydrophone Offset Travel Time Perturbation')
 xlabel('Azimuth')
 ylabel('TTP (ms)')
-set(gca,'fontsize',15)
+set(gca,'fontsize',12)
+c = colorbar;
+c.Label.String = 'Range (km)';
+c.Ticks = 0:5:30;
+caxis([0 30])
+colormap jet
+
+subplot(1,2,2)
+scatter(azmth,d_recov_ocean*1000,[],range,'filled')
+grid on
+xticks(0:60:360)
+xticks(0:30:360)
+xlim([0 360])
+title('Ocean Travel Time Perturbation')
+xlabel('Azimuth')
+ylabel('TTP (ms)')
+set(gca,'fontsize',12)
 c = colorbar;
 c.Label.String = 'Range (km)';
 c.Ticks = 0:5:30;

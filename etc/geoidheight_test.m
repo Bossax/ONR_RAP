@@ -64,7 +64,7 @@ xlabel('Range (km)')
 set(gca,'fontsize',13)
 %% 
 figure(3)
-scatter(tx_lon,tx_lat,20,gh,'filled');
+scatter(tx_lon,tx_lat,20,gh-2.3,'filled');
 grid on
 colormap jet
 cbar = colorbar;

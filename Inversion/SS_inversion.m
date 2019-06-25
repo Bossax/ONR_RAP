@@ -15,12 +15,18 @@ clearvars
 % 1. Ocean Domain
 % ACO_lat = 22.738894;                  % original
 % ACO_lon = -158.006009;                % original
-% ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
  
-ACO_lat= 22.738772;                  % June 2017
-ACO_lon= -158.006186;                % June 2017
-ACO_depth = -4727.6;                 % Original depth
+% ACO_lat= 22.738772;                  % June 2017
+% ACO_lon= -158.006186;                % June 2017
+
+ACO_lat= 22.738764;                  % June 2017 1st iteration
+ACO_lon= -158.0061781;               % June 2017 
+
+% ACO_depth =  -4729.92;                 % Original depth MSL
 % ACO_depth = -4733.906;            % at 4,736.266 m June 2017
+ACO_depth = -4735.29;                 % June 2017 1st iteration
+
+
 
 % Initialize the domain
 L = 60000;      % meter EDIT
@@ -885,7 +891,7 @@ ylim([0 1])
  %% 9. Save file
  cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file
 %  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
- save HEM_inverse_solution_Oct2018_originaldepth_L20km_sizing_2 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon
+ save HEM_inverse_solution_June2017_2nditeration_L20km_sizing_2 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon
 
  
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

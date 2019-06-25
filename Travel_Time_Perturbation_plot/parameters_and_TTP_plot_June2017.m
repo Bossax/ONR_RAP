@@ -1,7 +1,7 @@
 % Plot data points of the entire dataset
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear
-close all
+% clear
+% close all
 %ACO LAT/LON
 HEM_lat=22.738772;                  % June 2017
 HEM_lon=-158.006186;                %  June 2017

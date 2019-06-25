@@ -68,7 +68,6 @@ gh = geoidheight(tx_lat,tx_lon+360,'EGM96');
 
 % N_mean = 2.32;                                      % average geiod height over the area of coverage 
 % z_CTD = -gsw_z_from_p(pres_MSL,ACO_lat) + N_mean); % from MSL to ellipsoid
-
 z_CTD = -(gsw_z_from_p(pres_MSL,ACO_lat)+gh);             % from MSL to ellipsoid with variable GH
 
 % 2.1 truncate the upper bound using transducer depth

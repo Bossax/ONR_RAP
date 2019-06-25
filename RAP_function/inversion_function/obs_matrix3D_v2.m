@@ -257,13 +257,12 @@ if length(pixel_num_x)~=0 && length(pixel_num_y)~=0
 % 2. surface distances in of each pixel (total_pixel_distance)
 % 3. pixel numbers traveled by the ray
 
-    
 %%%% Calculate arc length of a ray in each layer
 % x_dist =dist([ACO_lat tx_lat],[ACO_lon tx_lon]);
 x_dist = tot_sep;
 % azmth = azimuth(tx_lat,tx_lon,ACO_lat,ACO_lon);
 azmth = az;
-[arc_lengths,tot_arclength,theta0,SS_priori,z,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(x_dist,tx_altitude,tx_lat,azmth,ACO_lat,ACO_lon,ACO_depth,month,year);
+[arc_lengths,tot_arclength,theta0,SS_priori,z,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(x_dist,tx_altitude,tx_lon,tx_lat,azmth,ACO_lat,ACO_lon,ACO_depth,month,year);
 cl = SS_priori(1);
 cr = SS_priori(end);
 
