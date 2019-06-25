@@ -302,13 +302,10 @@ for ii=1:length(tx_lat)
 end
 
 
-month = 'Oct';
-year = '2018';
-
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,month,year);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
 end
 
 %Estimate arrival time

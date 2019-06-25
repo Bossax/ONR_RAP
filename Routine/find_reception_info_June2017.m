@@ -25,7 +25,7 @@ end_hour = 5;           % EDIT
 %%  Bandpass filter for HEM 2000 Hz to 6000 Hz
 fl = 2000;
 fh = 6000;
-Fs = 24000; 
+Fs = 24000;
 trans_band = 500;  %Hz
 fcut = [fl fl fh fh] + [-1 1 -1 1]*trans_band;
 mags = [0 1 0];
@@ -48,7 +48,7 @@ while true
     else
         str_now_day = string(now_day);
     end
-    
+
     if now_hour < 10
         fname_d = "1706"+str_now_day+"-0"+string(now_hour);
     else
@@ -62,7 +62,7 @@ while true
        else
            now_hour = now_hour+1;
        end
-       
+
        if now_hour > end_hour && now_day == day(end)
            break;
        end
@@ -74,41 +74,41 @@ now_day = day(1)
 counter = 1;
 [len,~] = size(au_fname);
 while true
-     
+
     % Load Tx File and Calculate Estimated Travel Time of this 1 hour
     [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour);
-    
+
     % hourly file
     act_arrival=[];
     SNR=[];
     estimate = [];
-   
+
     % store the current hour
     m = 1;
     wav_name = au_fname(counter,:);
     current_hour = str2num(wav_name(8:9))
-    
+
     % Loop over minutes in the hour
     while true
-        
+
         % Audio File Directory
         cd("/Volumes/ACO_RAP_2/RAP/June2017Cruise/wav_data/"+string(now_day)+"_June")
-    
+
         %Load Audio Data
         mat_name = au_fname(counter,:);
         wav_name = au_fname(counter+1,:);
-        
-        % Timing audio data 
+
+        % Timing audio data
         [y,t_date] = hyd_audio_prep(mat_name,wav_name);
         time_offset =  -1/(3600*24);
         t_date = t_date - time_offset;      % HEM time is ahead UTC time
         datestr(t_date(1))
-        
+
         % Filtering
-        yf = filter(b,1,y); 
+        yf = filter(b,1,y);
         delay = round(mean(grpdelay(b,1,6000,Fs)));      % group delay
         yf = yf(delay+1:end);                       % shift output signal forward in time
-        yf(end+1:end+1+delay-1) = zeros(delay,1); 
+        yf(end+1:end+1+delay-1) = zeros(delay,1);
 
 
         % drop out est_arrival outside this 5-min time frame
@@ -116,7 +116,7 @@ while true
             est = est_arrival(find(est_arrival > t_date(1)));
             datestr(est(1))
         end
-        
+
         %%%%%%Cross Correlation%%%%%%
 
         [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_ideal(yf);
@@ -131,7 +131,7 @@ while true
          hold on
          scatter(t_date(demod_pos),demod_max,'r')
          axis tight
-         
+
          figure(2)
          clf
          plot(t_date,y)
@@ -141,16 +141,16 @@ while true
          datetick('x')
          axis tight
          %}
-         
+
          % Match the calculated actual arrival time with the estimated time calculated in the previous section
         for ii=1:length(arrivals)
             [arrival_diff,arrival_pos]=min(abs(est-arrivals(ii)));
             arrival_diff*(3600*24)
-          % if the discrepency is less than 50 ms 
+          % if the discrepency is less than 50 ms
             if abs(arrival_diff*(3600*24))<0.05
                 estimate(end+1) = est(arrival_pos);
                 act_arrival(end+1)=arrivals(ii);   % concatenate that timestamp and corresponding snr
-                SNR(end+1)=demod_snr(ii);         
+                SNR(end+1)=demod_snr(ii);
             end
 
 
@@ -167,14 +167,14 @@ while true
                 else
                     k = k+1;
                 end
-                
+
                 if k >= length(estimate)+1
                     break;
                 end
             end
         end
-        
-        
+
+
         counter = counter+2;
         m = m+1;
         % check if the file jumps to the next hour
@@ -183,11 +183,11 @@ while true
         end
         nx_fname = au_fname(counter,:);
         chk_hour =  str2double(nx_fname(8:9));
-        
+
         if chk_hour ~= current_hour
             break;
         end
-        
+
     end
 %% Save hourly file
 % 3. Rx File Directory
@@ -211,8 +211,8 @@ end
 
 if (now_hour > end_hour)& (now_day == day(end))
     break;
-end  
-     
+end
+
 end
 
 
@@ -229,7 +229,7 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 % ACO_lon = -158.006186;                % June2017
 
 ACO_lat= 22.738764;                  % June 2017 1st iteration
-ACO_lon= -158.0061781;               % June 2017 
+ACO_lon= -158.0061781;               % June 2017
 
 
 
@@ -238,7 +238,7 @@ ACO_lon= -158.0061781;               % June 2017
 ACO_depth = -4735.29;                 % June 2017 1st iteration
 
  % 2. Tx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file %% EDIT 
+cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file %% EDIT
 
 % 3. edit CTD file in the ray traing code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,13 +316,12 @@ for ii=1:length(tx_lat)
     x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon,referenceEllipsoid('WGS84'));
 end
 
-month = 'Jun';
-year = '2017'
 
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
+
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,month,year);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
 end
 
 %Estimate arrival time

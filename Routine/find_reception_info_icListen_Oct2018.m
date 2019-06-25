@@ -287,13 +287,10 @@ for ii=1:length(tx_lat)
     x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon,referenceEllipsoid('WGS84'));
 end
 
-month = 'Oct';
-year = '2018';
-
 % Estimated travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth),month,year;
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth);
 end
 
 % Estimated arrival time

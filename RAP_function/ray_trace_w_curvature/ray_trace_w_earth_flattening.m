@@ -1,4 +1,4 @@
-function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lon,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth,month,year)
+function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth,month,year)
 %%%%% Functions %%%%%%%%%%
 % 1. ctd file
 % 2. sound speed calculation function gsw_sound_speed
