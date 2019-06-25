@@ -320,7 +320,11 @@ end
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> parent of a29c772... Modified ray tracing code to take in month and year to match with CTD data
 =======
 
 >>>>>>> parent of a29c772... Modified ray tracing code to take in month and year to match with CTD data
