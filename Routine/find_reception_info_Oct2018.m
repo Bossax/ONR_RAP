@@ -222,11 +222,6 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 ACO_lat = 22.738772;                  % June 2017
 ACO_lon = -158.006186;                % June2017
 
-% ACO_lat= 22.738783;                  % June 2018
-% ACO_lon= -158.00619898;                % June 2018
-
-% ACO_lat=22.7387938;                    % June 2018 z suppress
-% ACO_lon=-158.00620893;                % June 2018 z suppress
 
 % ACO_lat = 22.73876736;                  % March 2019 #2
 % ACO_lon= -158.00617695;                % March 2019 2
@@ -305,7 +300,7 @@ end
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Oct','2018');
 end
 
 %Estimate arrival time

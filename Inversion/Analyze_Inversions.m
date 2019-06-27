@@ -95,8 +95,21 @@ ylabel('Lat')
 azmth = ones(length(tx_lat),1);
 % 0-360
 
+hyd = 'HEM'
+switch hyd
+    case 'HEM'
+        hyd_lat = ACO_lat;
+        hyd_lon = ACO_lon;
+        hyd_depth = ACO_depth;
+    case 'icListen'
+        hyd_lat = icListen_lat;
+        hyd_lon = icListen_lon;
+        hyd_depth = icListen_depth;
+end
+        
+
 for i=1:length(tx_lat)
-    azmth(i) = azimuth(ACO_lat,ACO_lon,tx_lat(i),tx_lon(i));
+    azmth(i) = azimuth(hyd_lat,hyd_lon,tx_lat(i),tx_lon(i));
 end
 theta = tx_heading';
 theta = tx_heading' - azmth;
@@ -123,7 +136,7 @@ grid on
 colormap jet
 cbar = colorbar;
 cbar.Label.String = 'ms';
-title('Reconstructed TTP Map from Ocean Perturbations (icListen)')
+title(sprintf('Reconstructed TTP Map from Ocean Perturbations (%s)',hyd))
 xlabel('Long')
 ylabel('Lat')
 set(gca,'fontsize',13)
@@ -142,7 +155,7 @@ yticks(-5:5)
 xlim([0 26])
 xlabel('Range (km)')
 ylabel('TTP (ms)')
-title('Reconstructed Measurements: Ocean Features (icListen)')
+title(sprintf('Reconstructed Measurements: Ocean Features (%s)',hyd))
 set(gca,'fontsize',12)
 cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
@@ -157,7 +170,7 @@ yticks(-5:5)
 xlim([0 26])
 xlabel('Range (km)')
 ylabel('TTP (ms)')
-title('Reconstructed Measurements: Hydrophone Offsets (icListen)')
+title(sprintf('Reconstructed Measurements: Hydrophone Offsets (%s)',hyd))
 set(gca,'fontsize',12)
 cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
@@ -171,7 +184,7 @@ yticks(-5:5)
 xlim([0 26])
 xlabel('Range (km)')
 ylabel('TTP (ms)')
-title('Reconstructed Measurements (icListen)')
+title(sprintf('Reconstructed Measurements (%s)',hyd)')
 set(gca,'fontsize',12)
 cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
@@ -189,6 +202,7 @@ grid on
 xticks(0:60:360)
 xticks(0:30:360)
 xlim([0 360])
+ylim([-4 4])
 title('Hydrophone Offset Travel Time Perturbation')
 xlabel('Azimuth')
 ylabel('TTP (ms)')
@@ -198,6 +212,7 @@ c.Label.String = 'Range (km)';
 c.Ticks = 0:5:30;
 caxis([0 30])
 colormap jet
+line([0 360],[0 0],'Color','k','Linewidth',2,'Linestyle','--')
 
 subplot(1,2,2)
 scatter(azmth,d_recov_ocean*1000,[],range,'filled')
@@ -205,6 +220,7 @@ grid on
 xticks(0:60:360)
 xticks(0:30:360)
 xlim([0 360])
+ylim([-4 4])
 title('Ocean Travel Time Perturbation')
 xlabel('Azimuth')
 ylabel('TTP (ms)')

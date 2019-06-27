@@ -319,17 +319,8 @@ end
 
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-
->>>>>>> parent of a29c772... Modified ray tracing code to take in month and year to match with CTD data
-=======
-
->>>>>>> parent of a29c772... Modified ray tracing code to take in month and year to match with CTD data
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Jun','2017');
 end
 
 %Estimate arrival time

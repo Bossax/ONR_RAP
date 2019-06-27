@@ -1,4 +1,4 @@
-function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth,month,year)
+function [arc_lengths,tot_dist,theta0,SS_flt,z_flt,SS_HOT_avg,surface_dist,r,est_tt,ray_angles,R_alpha] = ray_trace_w_earth_flattening(S,td_h,tx_lon,tx_lat,alpha,ACO_lat,ACO_lon,ACO_depth,month,year)
 %%%%% Functions %%%%%%%%%%
 % 1. ctd file
 % 2. sound speed calculation function gsw_sound_speed
@@ -49,26 +49,17 @@ temp = D(:,2);        %temperature
 sal = D(:,3);         %salinity (Sp)
 sal = gsw_SA_from_SP(sal,pres_MSL,ACO_lon,ACO_lat);
 
-ACO_GH = geoidheight(ACO_lat,ACO_lon+360,'EGM96');
 % Depths in the ellipsoidal coordinate 
+ACO_gh = geoidheight(ACO_lat,ACO_lon+360,'EGM96');
 z_td = -td_h;
-z_hyd = -ACO_depth-ACO_GH;      
+z_hyd = -ACO_depth+ACO_gh;      
 
 
 %% 2 truncate CTD data to fit the range between the receiver depth and the source depth
 % on the ellipsoidal surface Orthometrc height
 
-% Here ignore the change in geoid height along the ray path 
-% since the absolute change in geoid height within one layer of the ocean is small relative to the layer depth (~2m)
-% Only the starting depth in the first layer has to be in correspondsance
-% with the geoid height of the transmission location
-
-% geoid height at the transmission location
-gh = geoidheight(tx_lat,tx_lon+360,'EGM96');
-
-% N_mean = 2.32;                                      % average geiod height over the area of coverage 
-% z_CTD = -gsw_z_from_p(pres_MSL,ACO_lat) + N_mean); % from MSL to ellipsoid
-z_CTD = -(gsw_z_from_p(pres_MSL,ACO_lat)+gh);             % from MSL to ellipsoid with variable GH
+N_mean = 2.32;                                      % average geiod height over the area of coverage 
+z_CTD = -(gsw_z_from_p(pres_MSL,ACO_lat) + N_mean); % from MSL to ellipsoid
 
 % 2.1 truncate the upper bound using transducer depth
 rm_ind = find(z_CTD<=z_td);

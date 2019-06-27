@@ -9,6 +9,13 @@
 
 close all
 clearvars
+
+% debug matrix G option
+debug_obs = false; 
+
+% spatial filter
+spatial_filter = false;
+
 %% 1. Initialize ocean domain
 % Work on the spherical surface
 %%%%%%%%%%%%%%%%
@@ -16,22 +23,12 @@ clearvars
 
 icListen_lat = 22.739153;                   % June 2018 north of HEM  42.22 m nort of HEM(June 2017 Position)   
 icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east of HEM(June 2017 Position)   
-% icListen_depth = 4734.455;              %  Aug 2018
 
-% icListen_lat=22.73912734;                  % March 2019 #2
-% icListen_lon=-158.006111197;                % March 2019
-% icListen_depth = 4735.71;                  %  March 2019
-
-
-% icListen_lat=22.73911569;                   % March 2019 #3
-% icListen_lon=-158.006106601;                 % March 2019
-% icListen_depth = -4732.336;                  %  March 2019
-
-icListen_depth = -4729.92+2.32 +1.75;          % original depth ellipsoid height
+icListen_depth = -4729.92 +1.75;            % original depth MSL
 
 % Initialize the domain
 L = 60000;      % meter EDIT
-grid_num = 25;  % grid_num x grid_num  pixels EDIT
+grid_num = 49;  % grid_num x grid_num  pixels EDIT
 tot_grid_num = grid_num^2;
 
 [~,lat_u,~] = m_fdist(icListen_lon,icListen_lat,0,L);
@@ -91,13 +88,65 @@ colormap jet
 
 
 %% 3 Download Tx data points
-day = 27:30;
-start_hour = 3;
-end_hour = 14;
-[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'icListen');
-%%
-% 3.1 travel time perturbation
-ttp = (act_arrival - real(est_arrival))*3600*24*1000;
+% 3.1 download data files
+month = 'Oct'
+year = '2018'
+
+switch year
+    case '2018'
+        switch month
+            case 'Jun'
+                %%% June 2018
+                day = 19:22;
+                start_hour = 23;
+                end_hour = 23;
+                [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_June(day,start_hour,end_hour,'icListen');
+
+                % remove outliers
+                ttp = (act_arrival-real(est_arrival))*1000*3600*24;
+                rm_ind = find(abs(ttp) > 4*(rms(ttp-median(ttp))));
+                ttp(rm_ind) = [];
+                tx_t(rm_ind) = [];
+                tx_lon(rm_ind) = [];
+                tx_lat(rm_ind) = [];
+                tx_heading(rm_ind) = [];
+                tx_altitude(rm_ind) = [];
+                tx_xvel(rm_ind) = [];
+                range(rm_ind) = [];
+                x_err(rm_ind) = [];
+                y_err(rm_ind) = [];
+                z_err(rm_ind) = [];
+                act_arrival(rm_ind) = [];
+                est_arrival(rm_ind) = [];
+                SNR(rm_ind) = [];
+
+            case 'Oct'
+                %%% October 2018
+                day = 27:30;
+                start_hour = 3;
+                end_hour = 14;
+                [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,'icListen');
+                
+        end
+end
+
+% limit range
+keep_ind = find(range <15.2);
+
+% 3.2 travel time perturbation
+ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
+
+
+ttp = ttp_origin(keep_ind);
+tx_lat = tx_lat(keep_ind);
+tx_lon = tx_lon(keep_ind);
+tx_altitude = tx_altitude(keep_ind);
+tx_heading = tx_heading(keep_ind);
+x_err = x_err(keep_ind);
+y_err = y_err(keep_ind);
+z_err = z_err(keep_ind);
+SNR = SNR(keep_ind);
+range = range(keep_ind);
 
 % 3.2 subtract ship factors
 %{
@@ -153,18 +202,20 @@ G3 = zeros(length(tx_lon),grid_num*grid_num);
 G4 = zeros(length(tx_lon),grid_num*grid_num);
 Ghyd =zeros(length(tx_lon),3);
 M = zeros(length(tx_lon),1);
-
-theta_l = zeros(1,length(tx_lon));  % launched ray angle
 theta_r = zeros(1,length(tx_lon));  % received ray angle
+theta_l = zeros(1,length(tx_lon));  % launched ray angle
+
 % loop over each ray
 for iii=1:length(tx_lon)
     iii
     % find pixels and the distance in each pixel
-    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,intd_G_all1,z,SS,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,1);
-    [G_of_nray2,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,2);
-    [G_of_nray3,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,3);
-    [G_of_nray4,~,~,~,~,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,4);
+    
+    [G_of_nray1,total_pixel_num,theta_l(iii),theta_r(iii),intd_G1,z_cross,intd_G_all1,z,SS,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,1,month,year);
+    [G_of_nray2,~,~,~,intd_G2,~,intd_G_all2,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,2,month,year);
+    [G_of_nray3,~,~,~,intd_G3,~,intd_G_all3,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,3,month,year);
+    [G_of_nray4,~,~,~,intd_G4,~,intd_G_all4,~,~,~]=obs_matrix3D_v2(tx_lat(iii),tx_lon(iii),tx_altitude(iii),icListen_lat,icListen_lon,icListen_depth,x_node,y_node,4,month,year);
     [G_of_hyd] = obs_matrix_hyd(tx_lat(iii),tx_lon(iii),tx_altitude(iii),theta_r(iii),icListen_lat,icListen_lon,icListen_depth);
+   
     % form matrix G
     G1(iii,:) = G_of_nray1;
     G2(iii,:) = G_of_nray2;
@@ -172,78 +223,93 @@ for iii=1:length(tx_lon)
     G4(iii,:) = G_of_nray4;
     Ghyd(iii,:) = G_of_hyd;
     M(iii) = length(total_pixel_num)-1;
+    
 end 
-%%
+
 cl = SS(1);  cr = SS(end);  
 G1 = real(G1);
 G2 = real(G2);
 G3 = real(G3);
 G4 = real(G4);
 Ghyd = real(Ghyd);
+
 G = [G1 G2 G3 G4 Ghyd];
-% G = [G1 Ghyd];
 %% plot elements og the observation matrix
-%{
-figure(4)
-subplot(4,1,1)
-plot(1:tot_grid_num,sum((G1),1))
-xticks(1:20:tot_grid_num)
-grid on
-ylabel('meter')
-xlabel('pixel')
-xlim([1 tot_grid_num])
-title('Obserbvation Matrix of the first mode')
+if debug_obs
+    
+    figure(4)
+    subplot(4,1,1)
+    plot(1:tot_grid_num,sum((G1),1))
+    xticks(1:50:tot_grid_num)
+    grid on
+    ylabel('meter')
+    xlabel('pixel')
+    xlim([1 tot_grid_num])
+    title('Obserbvation Matrix of the first mode')
+    
+    subplot(4,1,2)
+    plot(1:tot_grid_num,sum((G2),1))
+    xticks(1:50:tot_grid_num)
+    grid on
+    ylabel('meter')
+    xlabel('pixel')
+    xlim([1 tot_grid_num])
+    title('Obserbvation Matrix of the second mode')
+    
+    subplot(4,1,3)
+    plot(1:tot_grid_num,sum((G3),1))
+    xticks(1:50:tot_grid_num)
+    grid on
+    ylabel('meter')
+    xlabel('pixel')
+    xlim([1 tot_grid_num])
+    title('Obserbvation Matrix of the third mode')
+    
+    subplot(4,1,4)
+    plot(1:tot_grid_num,sum((G4),1))
+    xticks(1:50:tot_grid_num)
+    grid on
+    ylabel('meter')
+    xlabel('pixel')
+    xlim([1 tot_grid_num])
+    title('Obserbvation Matrix of the third mode')
+    
+    
+    figure
+    plot(1:3,sum((Ghyd),1))
+    % xticks(1:10:tot_grid_num)
+    grid on
+    ylabel('meter')
+    xlabel('pixel')
+    % xlim([1 tot_grid_num])
+    title('Obserbvation Matrix of the hydrophne position offsets')
 
-subplot(4,1,2)
-plot(1:tot_grid_num,sum((G2),1))
-xticks(1:10:tot_grid_num)
-grid on
-ylabel('meter')
-xlabel('pixel')
-xlim([1 tot_grid_num])
-title('Obserbvation Matrix of the second mode')
 
-subplot(4,1,3)
-plot(1:tot_grid_num,sum((G3),1))
-xticks(1:10:tot_grid_num)
-grid on
-ylabel('meter')
-xlabel('pixel')
-xlim([1 tot_grid_num])
-title('Obserbvation Matrix of the third mode')
-%}
-%{
-subplot(4,1,4)
-plot(1:3,sum((Ghyd),1))
-% xticks(1:10:tot_grid_num)
-grid on
-ylabel('meter')
-xlabel('pixel')
-% xlim([1 tot_grid_num])
-title('Obserbvation Matrix of the hydrophne position offsets')
-%}
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Inversion
 % 6. Inversion process to recover the ss aperturbation field
 % measurement matrix (TTP matrix)
-d = ttp'/1000;   % s
+d = real(ttp'/1000);   % s
 % travel time perturbation error
 Cd = data_error_matrix(x_err,y_err,z_err,tx_lat,tx_lon,tx_heading,theta_l,theta_r,SNR,cl,cr,icListen_lat,icListen_lon,icListen_depth);
 
 Cd = diag(real(Cd));
 
-
-% form a filtering matrix
-W = zeros(length(d),length(d));
-for iii = 1:length(d)
-    iii
-    
-    tx_dist = distance(tx_lat(iii)*ones(1,length(d)-iii+1),tx_lon(iii)*ones(1,length(d)-iii+1),tx_lat(iii:end),tx_lon(iii:end),referenceEllipsoid('WGS84'));
-    W(iii,iii:end) = exp(-(tx_dist/20000).^2);
-    
-end
+% % % % % form a filter matrix % % % % % % % 
+if spatial_filter
+    W = zeros(length(d),length(d));
+    for iii = 1:length(d)
+        iii
         
-W = W+W'-diag(diag(W));
+        tx_dist = distance(tx_lat(iii)*ones(1,length(d)-iii+1),tx_lon(iii)*ones(1,length(d)-iii+1),tx_lat(iii:end),tx_lon(iii:end),referenceEllipsoid('WGS84'));
+        W(iii,iii:end) = exp(-(tx_dist/20000).^2);
+        
+    end
+    
+    W = W+W'-diag(diag(W));
+end
 %% pre-spatially filter d (before inversion)
 % for spatial average
 %{
@@ -274,7 +340,17 @@ G_geninv = P*G'*(G*P*G'+Cd)^-1;
 % 6.2. recovered m
 m_recov = G_geninv*d;
 
+% Posteriori covariance
+P_post = round((eye(tot_grid_num*4+3)-G_geninv*G)*P,10,'significant');
+P_post_triu = triu(P_post);
+P_post_tril = tril(P_post);
+P_post_newu = (P_post_triu+P_post_triu')-diag(diag(P_post_triu));
+P_post_newl = (P_post_tril+P_post_tril')-diag(diag(P_post_tril));
+P_post_new = (P_post_newu+P_post_newl)/2;
+
+
 % Arrange matrices
+P_post_alpha = P_post_new;
 % recovered m
 m_recov1 = m_recov(1:tot_grid_num);
 m_recov2 = m_recov(tot_grid_num+1:2*tot_grid_num);
@@ -299,15 +375,6 @@ Res_mat4 = Res_mat(3*tot_grid_num+1:4*tot_grid_num,3*tot_grid_num+1:4*tot_grid_n
 Res_mat_p  = Res_mat(4*tot_grid_num+1:4*tot_grid_num+3,4*tot_grid_num+1:4*tot_grid_num+3);
 
 % 6.5 Posteriori covariance
-% Posteriori covariance
-P_post = round((eye(tot_grid_num*4+3)-G_geninv*G)*P,10,'significant');
-P_post_triu = triu(P_post);
-P_post_tril = tril(P_post);
-P_post_newu = (P_post_triu+P_post_triu')-diag(diag(P_post_triu));
-P_post_newl = (P_post_tril+P_post_tril')-diag(diag(P_post_tril));
-P_post_new = (P_post_newu+P_post_newl)/2;
-P_post_alpha = P_post_new;
-
 P_post1 = P_post_new(1:tot_grid_num,1:tot_grid_num);
 P_post2 = P_post_new(tot_grid_num+1:2*tot_grid_num,tot_grid_num+1:2*tot_grid_num);
 P_post3 = P_post_new(2*tot_grid_num+1:3*tot_grid_num,2*tot_grid_num+1:3*tot_grid_num);
@@ -386,7 +453,7 @@ f3_avg = sum(f3(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 f4_avg = sum(f4(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 
 % depth averaging and mode combining operator
-F_operator = [diag(ones(1,625)*f1_avg) diag(ones(1,625)*f2_avg) diag(ones(1,625)*f3_avg) diag(ones(1,625)*f4_avg)];
+F_operator = [diag(ones(1,grid_num^2)*f1_avg) diag(ones(1,grid_num^2)*f2_avg) diag(ones(1,grid_num^2)*f3_avg) diag(ones(1,grid_num^2)*f4_avg)];
 
 SSP_d_avg2 = F_operator*alpha0;
 P_prior_d_avg = F_operator*P(1:end-3,1:end-3)*F_operator';
@@ -477,7 +544,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 25000;
+R = 15000;
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
 inc_ang =360/num_point;
@@ -499,7 +566,7 @@ imagesc(x_cen,y_cen,recov_SS1)
 colormap jet
 cbar = colorbar;
 cbar.Label.String = 'Sound Speed Perturbation (m/s)';
-caxis([-2 2])
+caxis([-6 6])
 title('Recovered SS Perturbation Field (1st mode)')
 hold on
 scatter(icListen_lon,icListen_lat,200,'pk','filled')
@@ -840,8 +907,8 @@ title(sprintf('Recovered Measurement: Median = %.2f ms, RMS = %.2f ms',med_dreco
 ylabel('Frequency')
 xlabel('msec')
 %% 9. save file
-cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file
-save icListen_inverse_solution_Oct_originaldepth2 icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W tx_lon tx_lat
+cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file/October2018
+save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_15kmlim icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lon tx_lat tx_heading
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)
