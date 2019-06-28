@@ -13,7 +13,7 @@ icListen_lon = -158.0061254;
 day = 27:30 ;               %  Edit
 start_hour = 3;             % Edit
 end_hour = 14;              % EDIT
-hydrophone = "icListen";    % EDIT
+hydrophone = "HEM";    % EDIT
 % extract tx rx H
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 

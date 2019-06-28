@@ -233,8 +233,8 @@ icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east
 %%% icListen Depth
 % icListen_depth = -4736.226+2.32;            % June 2018 (from HEM)
 % icListen_depth = -4734.646+2.32;            % March 2019 # 2
-icListen_depth = -4729.92+2.32 +1.75;          % original depth ellipsoid height+ 1.75 m higher than HEM
-% icListen_depth = -4733.24+2.32;                    %  Oct 2018 from first iteraion
+icListen_depth = -4729.92+1.75;          % original depth ellipsoid height+ 1.75 m higher than HEM
+% icListen_depth = -4733.24;                    %  Oct 2018 from first iteraion
  
 % 2. Tx File Directory
 cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3")  %% EDIT 

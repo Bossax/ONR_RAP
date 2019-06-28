@@ -18,12 +18,13 @@ SNR=10*log10(demod/median(demod));  % / noise
 threshold2=max(SNR);
 threshold2=threshold2*(4/5)+2;  
 
+
 if threshold2>threshold
-    threshold=threshold2
+    threshold=threshold2;
 end
 n=find(SNR>threshold);            % Find all points exceeding threshold
 
-
+threshold
 %% Get each xcorr arrival %%
 demod_separation=[];            % indicies of the first points of the clusters
 

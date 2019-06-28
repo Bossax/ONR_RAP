@@ -13,7 +13,7 @@ demod_max=[];                   % Output
 demod_pos=[];                   % Output
     
     %%%%%%Replica pulse for cross correlation%%%%%%%
-    load LFM_pulse_sample.mat
+    load LFM_pulse_ideal.mat
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     

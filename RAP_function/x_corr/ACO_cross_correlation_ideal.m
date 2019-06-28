@@ -1,4 +1,4 @@
-function [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_sample(y)
+function [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_ideal(y)
 %Create pulse replica for time series
 % return
 fs=24000;
@@ -31,11 +31,11 @@ threshold2=max(SNR);
 threshold2=threshold2*(4/5);  % scaling??
 
 if threshold2>threshold
-    threshold=threshold2
+    threshold=threshold2;
 end
 n=find(SNR>threshold);            %Find large values for demod xcorr
 %%%%
-
+threshold
 
 %% Get each xcorr arrival %%
 demod_separation=[];

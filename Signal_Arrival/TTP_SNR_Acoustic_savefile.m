@@ -8,27 +8,27 @@
 clear
 close all
 
-day = 27:27 ;            %  Edit
+day = 27:30 ;            %  Edit
 start_hour = 3;         % Edit
-end_hour = 9;          % Edit
-Fs = 32000;
-    
+end_hour = 14;          % Edit
+Fs = 24000;
+
 %% Load audio file name
 % create a set of file names
 au_fname = [];
-now_hour = start_hour;
-now_day = day(1);
+now_hour = start_hour
+now_day = day(1)
 while true
-    cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/icListen/"+string(now_day)+"_Oct")
+    cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/HEM/"+string(now_day)+"_Oct")
     while now_hour <= 23
         if now_hour < 10
-           fname_d = "SBW1391_201810"+string(now_day)+"_0"+string(now_hour);
+            fname_d = "1810"+string(now_day)+"-0"+string(now_hour);
         else
-           fname_d = "SBW1391_201810"+string(now_day)+"_"+string(now_hour);
+            fname_d =  "1810"+string(now_day)+"-"+string(now_hour);
         end
         d = dir(fname_d+"*");
         au_fname = vertcat(au_fname,d.name);
-        now_hour = now_hour+1;
+       now_hour = now_hour+1;
        if (now_hour > end_hour)& (now_day == day(end))
             break;
        end
@@ -40,11 +40,10 @@ while true
         now_day = now_day+1;
 end
 
-
 %%  Bandpass filter for HEM 2000 Hz to 6000 Hz
 fl = 2000;
 fh = 6000;
-Fs = 32000;
+Fs = 24000;
 trans_band = 500;  %Hz
 fcut = [fl fl fh fh] + [-1 1 -1 1]*trans_band;
 mags = [0 1 0];
@@ -61,6 +60,7 @@ est_reception = [];
 act_reception = [];               % arrival time
 env_pk = [];                      % peak magnitude of envelope signals
 envpk_pos = [];
+added_env_pk = [];
 tx_time =[];
 arrival_mark = [];                  % markers of arrival points of time in the audio file
 tx_range = [];
@@ -70,7 +70,7 @@ sum_ind = 0;
 now_hour = start_hour;
 now_day = day(1);
 counter = 1;
-[len_fname,~] = size(au_fname);
+
 
 add_nx = 0;
 add_nx2 = 0;
@@ -82,43 +82,39 @@ while true
     % day and hour
     % load tx file and calculate estimated arrival times
     [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour);
-    
     % minutes
     m = 1;
-    wav_name = au_fname(counter,:);
-    current_hour = str2num(wav_name(18:19))
-       while true  
-             
-             cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/icListen/"+string(now_day)+"_Oct")
+    
+       while m <=12  
+             save_hour = au_fname(counter,8:9);
+             cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/HEM/"+string(now_day)+"_Oct")
               %Load Audio Data
-              wav_name = au_fname(counter,:);
+              mat_name = au_fname(counter,:);
+              wav_name = au_fname(counter+1,:);
               % Timing audio data 
-             % Timing audio data 
-             [y,t_date] = icListen_audio_prep(wav_name);
-             time_offset = time_correction(t_date(1));       % load time offset
-             t_date = t_date - time_offset;                  % icListen time offset from UTC
-             sprintf("file end time %s",datestr(t_date(end)))
-             % Filtering
-            r = 0.1;
-            window = tukeywin(length(y),r)';
-            y_ic4_f =  y.*window';
-            invwin_ic = [0 0 0 0 0 0 0 1./window(8:end-7) 0 0 0 0 0 0 0];
+             [y,t_date] = hyd_audio_prep(mat_name,wav_name);
              
-             yf = filter(b,1,y_ic4_f); 
+             % time offset correction
+             time_offset = time_correction(t_date(1));
+             t_date = t_date - time_offset;      % HEM time is ahead UTC time
+             datestr(t_date(end))
+             
+             % Filtering
+             yf = filter(b,1,y); 
              delay = round(mean(grpdelay(b,1,6000,Fs)));      % group delay
              yf = yf(delay+1:end);                       % shift output signal forward in time
              yf(end+1:end+1+delay-1) = zeros(delay,1); 
-             yf = yf.*invwin_ic';
+
              %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
              % Envelope Signal
              % Generate Envelope signal and detect the peaks
-             [demod,demod_pos_pks,demod_pos_1st_pk,demod_snr_pks,t_sep] = ACO_cross_correlation_ideal_bottom_bounce_icListen(yf);
-             
-             
-             t_reception = t_date(demod_pos_1st_pk);
-             
+%              [demod,demod_pos_pks,demod_pos_1st_pk,demod_snr_pks,t_sep] = ACO_cross_correlation_ideal_bottom_bounce(y);
+              [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_ideal(y);
+             t_reception = t_date(demod_pos);
+
              %%% Eliminate peaks without tx points
-                rm_ind = [];                
+                rm_ind = [];
+                
                 for k =1:length(t_reception)
 
                     [~,I] = max(find((t_reception(k) -tx_t)>0));
@@ -129,28 +125,27 @@ while true
                     end
                 end
 
-                demod_pos_1st_pk(rm_ind) = [];
-                t_sep(rm_ind) = [];
-                t_reception = t_date(demod_pos_1st_pk);
+                demod_pos(rm_ind) = [];
+%                 t_sep(rm_ind) = [];
+                t_reception = t_date(demod_pos);
                
-                rm_ind_2pos = [];
-                for p = 1:length(rm_ind)
-                    rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(p)-1:(2*rm_ind(p)));
-                end
-                demod_pos_pks(rm_ind_2pos) = [];
-                
+%                 rm_ind_2pos = [];
+%                 for p = 1:length(rm_ind)
+%                     rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(p)-1:(2*rm_ind(p)));
+%                 end
+%                 demod_pos_pks(rm_ind_2pos) = [];
+            
             %%%%%%%%Cropping%%%%%%%%%%%
             % crop audio signal and envelope
             len = 20 *Fs;                         % 18 sec after tx times (sample)
-%             sprintf("The added tx time %s",datestr(tx_sd2nex))
-            [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading_d,est_reception_d,t_reception,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex] = truncate_timeseries(yf,t_date,demod,demod_pos_1st_pk,demod_pos_pks,tx_t,x_dist,tx_heading,est_arrival,t_reception,len,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex);
-                
+%             [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading_d,est_reception_d,t_reception,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex] = truncate_timeseries(yf,t_date,demod,demod_pos,demod_pos_pks,tx_t,x_dist,tx_heading,est_arrival,t_reception,len,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex);
+            [trun_ausig_train,trun_env_train,pk_ind,env_peak,added_env_pk_hd,tx_td,range,heading_d,est_reception_d,t_reception,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex] = truncate_timeseries(yf,t_date,demod,demod_pos,tx_t,x_dist,tx_heading,est_arrival,t_reception,len,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex);
 
             %%% outputs
             % storage envelope peaks and locations (in the ttp axis)
             env_pk = vertcat(env_pk,env_peak);
             envpk_pos = vertcat(envpk_pos,pk_ind);
-
+            added_env_pk = vertcat(added_env_pk,added_env_pk_hd');
 
             %%%%% Stack time-series
             Arrival_signal = vertcat(Arrival_signal,trun_ausig_train);
@@ -168,12 +163,13 @@ while true
              ttp_snr_sig_data.est_arrival = est_reception;
              ttp_snr_sig_data.act_arrival = act_reception;
              ttp_snr_sig_data.tx_t = tx_time;
+             ttp_snr_sig_data.added_env_pk = added_env_pk;
              ttp_snr_sig_data.env_pk = env_pk;
              ttp_snr_sig_data.envpk_pos = envpk_pos;
              ttp_snr_sig_data.range = tx_range;
              ttp_snr_sig_data.heading = heading;
-             sname = "ttp_snr_sig_data"+ "_2018_10_"+string(now_day)+ "_"+ string(current_hour)+"_icListen"
-             cd '/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/ttp_snr_plot/icListen'
+             sname = "ttp_snr_sig_data"+ "_2018_10_"+string(now_day)+ "_"+ string(save_hour)
+             cd '/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/ttp_snr_plot/HEM'
              save(sname,'ttp_snr_sig_data' );
 
               Arrival_signal = [];               % Output matrix
@@ -185,21 +181,10 @@ while true
               tx_time = [];
               tx_range = [];
               heading = [];
+              added_env_pk =[];
             end
-            counter = counter+1;
-            m = m+1;
-            % check if the file jumps to the next hour
-        
-            if counter > len_fname
-                break;
-            end
-            nx_fname = au_fname(counter,:);
-            chk_hour =  str2double(nx_fname(18:19));
-
-            if chk_hour ~= current_hour
-                break;
-            end
-            
+            counter = counter+2;
+            m = m+1
         end
         
    
@@ -214,16 +199,21 @@ while true
         break;
      end
 end
-%%
+%% Function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(day,hour)
     %% Load POS MV TX/RX files
-    cd('/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3')
+    cd('/Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file')
     % create a set of file names
     %ACO LAT/LON
-    icListen_lat = 22.739153;                   % June 2018 north of HEM  42.22 m nort of HEM(June 2017 Position)   
-    icListen_lon = -158.0061254;                % June 2018 east of HEM  5.94 m east of HEM(June 2017 Position)   
-    icListen_depth = -4729.92+1.75;          % original depth ellipsoid height+ 1.75 m higher
+%     ACO_lat = 22.738772;                  % June 2017
+%     ACO_lon = -158.006186;                % June2017
+    
+    ACO_lat = 22.7387643                     % Oct 2018 from original depth
+    ACO_lon = -158.00617623                  % Oct 2018 from original depth
+    
+    ACO_depth = -4734.58;            % Oct 2018 from original depth
+    
     fname = [];
     now_hour = hour;
     now_day = day;
@@ -260,18 +250,21 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(day,
         tx_altitude = horzcat(tx_altitude,tx_data.altitude);   
         tx_heading = horzcat(tx_heading,tx_data.heading);
     
-   end
+   end  
 
-   % Geodic Length
-   for ii=1:length(tx_lat)
-       x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon,referenceEllipsoid('WGS84'));
-   end
-   
-   % Estimated travel time based on CTD cast
-   for ii=1:length(x_dist)
-       azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon);
-       [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth);
-   end
+    %Boat distance from ACO
+    for i=1:length(tx_lat)
+        x_dist(i)=dist([ACO_lat tx_lat(i)],[ACO_lon tx_lon(i)]);
+    end
+
+    
+    %Estimate travel time based on CTD cast
+
+    for ii=1:length(x_dist)
+     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Oct','2018');
+    end
+
     %Estimate arrival time
     est_arrival=tx_t+(est_tt./(3600*24));
 
@@ -287,25 +280,8 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(day,
     
 end
 
-function time_offset = time_correction(time)
- % return time offset for timestamp correction
- date_mark1=  "20181030 05:55";
- 
- date_mark1 = datenum(date_mark1,'yyyymmdd HH:MM');
- 
- if time <= date_mark1
-     time_offset =  -7/(3600*24);
-     
- else
-     time_offset = +1/(3600*24);
-     
- end
- 
- end
-
-%%
-function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,est_reception_d,t_reception,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex] = truncate_timeseries(y,t_date,demod,demod_pos_1st_pk,demod_pos_pks,tx_t,x_dist,tx_heading,est_arrival,t_reception,len,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex);
-    Fs = 32000; 
+function [trun_ausig_train,trun_env_train,pk_ind,env_peak,added_env_pk_hd,tx_td,range,heading,est_reception_d,t_reception,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex] = truncate_timeseries(y,t_date,demod,demod_pos,tx_t,x_dist,tx_heading,est_arrival,t_reception,len,add_nx,add_nx2,l_zeropad_sam,t_zeropad_sam,tx_from_pre,tx_sd2nex);
+    Fs = 24000; 
     %%%%% find indices in time in the audio file that are closest tx times
     ind = zeros(1,length(tx_t));                % indices of transmission timestamps in rx times
     C = zeros(1,length(tx_t));                  % timestamps in t_date
@@ -389,8 +365,8 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
                     %  handle = min(find(y(leading_edge:end) >= 0.25e4));   % thredshold 0.5e5
                     
                     % last reception
-                    if ~isempty(demod_pos_1st_pk)
-                        if  demod_pos_1st_pk(end) > length(y)              % reception is in the next file
+                    if ~isempty(demod_pos)
+                        if  demod_pos(end) > length(y)              % reception is in the next file
                             l_zeropad_sam = length(y) - leading_edge+1;     % zero pad next file
                             t_zeropad_sam = trailing_edge - length(y);
                             add_nx = 1                                       % set add_nx to be active
@@ -446,7 +422,7 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
     add_ind = [];
     for j = 1:length(est_reception_d)
         % check for missing times
-        t_diff = min(abs((est_reception_d(j) - t_date(demod_pos_1st_pk))*3600*24));
+        t_diff = min(abs((est_reception_d(j) - t_date(demod_pos))*3600*24));
         if t_diff >0.05 
             % add time index in the demod
             [~,I] = min(abs(est_reception_d(j)-t_date));
@@ -467,12 +443,19 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
         ind(end) = [];
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%% add missing reception times %%%%%%%%%%%%%%%%%%%%
-    demod_pos_1st_pk = sort(vertcat(demod_pos_1st_pk,add_ind'));
-    for k = 1:length(add_ind)
-        demod_pos_pks = sort(vertcat(demod_pos_pks,[1;1]*add_ind(k)));
-    end
+    detected_pks = length(demod_pos);
+    [demod_pos,I] = sort(horzcat(demod_pos,add_ind));    
+    added_env_pk_hd = zeros(1,length(demod_pos));
+    added_times = find(I > detected_pks);
+    disp(length(demod_pos))
+    disp(length(added_env_pk_hd))
+    added_env_pk_hd(added_times) = 1;
+    
+%     for k = 1:length(add_ind)
+%         demod_pos_pks = sort(vertcat(demod_pos_pks,[1;1]*add_ind(k)));
+%     end
    
-   t_reception = t_date(demod_pos_1st_pk);
+   t_reception = t_date(demod_pos);
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
    
@@ -491,14 +474,15 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
         end
     end
        
-    demod_pos_1st_pk(rm_ind) = [];
-    t_reception = t_date(demod_pos_1st_pk);
+    demod_pos(rm_ind) = [];
+    added_env_pk_hd(rm_ind) = [];
+    t_reception = t_date(demod_pos);
 
-    rm_ind_2pos = [];
-    for w = 1:length(rm_ind)
-        rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(w)-1:(2*rm_ind(w)));
-    end
-    demod_pos_pks(rm_ind_2pos) = [];
+%     rm_ind_2pos = [];
+%     for w = 1:length(rm_ind)
+%         rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(w)-1:(2*rm_ind(w)));
+%     end
+%     demod_pos_pks(rm_ind_2pos) = [];
      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
    
     %%%%%% eliminate act arrival without est arrival
@@ -515,14 +499,14 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
         end
     end
        
-    demod_pos_1st_pk(rm_ind) = [];
-    t_reception = t_date(demod_pos_1st_pk);
+    demod_pos(rm_ind) = [];
+    t_reception = t_date(demod_pos);
 
-    rm_ind_2pos = [];
-    for w = 1:length(rm_ind)
-        rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(w)-1:(2*rm_ind(w)));
-    end
-    demod_pos_pks(rm_ind_2pos) = [];
+%     rm_ind_2pos = [];
+%     for w = 1:length(rm_ind)
+%         rm_ind_2pos = horzcat(rm_ind_2pos,2*rm_ind(w)-1:(2*rm_ind(w)));
+%     end
+%     demod_pos_pks(rm_ind_2pos) = [];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
    %%%%%%%%% shift peak locations to the tx axis (zero point at tx time)
@@ -531,16 +515,17 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
    u = 1;
     for w = 1:length(t_reception)
         if (w==1)& (n_offset ~= 0)
-            env_pk_hd = vertcat(env_pk_hd,demod(demod_pos_pks(1:2))');
-            envpk_pos_hd = vertcat(envpk_pos_hd,demod_pos_pks(1:2)'+n_offset);
+            env_pk_hd = horzcat(env_pk_hd,demod(demod_pos(u)));
+            envpk_pos_hd = horzcat(envpk_pos_hd,demod_pos(u)+n_offset);
         else
-            env_pk_hd = vertcat(env_pk_hd,demod(demod_pos_pks((2*w-1):2*w))');
-            envpk_pos_hd = vertcat(envpk_pos_hd,demod_pos_pks((2*w-1):2*w)'-ind(u));
+            env_pk_hd = horzcat(env_pk_hd,demod(demod_pos(u))');
+            envpk_pos_hd = horzcat(envpk_pos_hd,demod_pos(u)-ind(u));
             u = u+1;
         end
     end 
-    env_pos_1pk = transpose(envpk_pos_hd(1:end,1));           % fisrt peak of each signal (in tx time domain)
-  
+    
+    env_pk_hd = transpose(env_pk_hd);
+    envpk_pos_hd = transpose(envpk_pos_hd);
    
     % find zero ttp indicies
     % start time and end time of each signal
@@ -567,8 +552,8 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
      for k = 1:length(tx_td)
         trun_ausig_train(k,:) = ausig_train(k, start_time_indx(k):end_time_indx(k) )-mean(ausig_train(k, start_time_indx(k):end_time_indx(k) ));
         trun_env_train(k,:) = env_train(k, start_time_indx(k):end_time_indx(k) )-mean(env_train(k, start_time_indx(k):end_time_indx(k) ));
-        pk_ind = vertcat(pk_ind,[envpk_pos_hd(k,1) envpk_pos_hd(k,2)] -[1 1]*start_time_indx(k) );
-        env_peak = vertcat(env_peak,([env_pk_hd(k,1) env_pk_hd(k,2)]-mean(env_train(k, start_time_indx(k):end_time_indx(k))))/max(trun_env_train(k,:)));
+        pk_ind = vertcat(pk_ind,envpk_pos_hd(k) - start_time_indx(k) );
+        env_peak = vertcat(env_peak,env_pk_hd(k)- mean(env_train(k, start_time_indx(k):end_time_indx(k))))/max(trun_env_train(k,:));
         trun_ausig_train(k,:)=trun_ausig_train(k,:)/max(trun_ausig_train(k,:));
         trun_env_train(k,:) = trun_env_train(k,:)/max(trun_env_train(k,:));
 
@@ -597,6 +582,33 @@ function [trun_ausig_train,trun_env_train,pk_ind,env_peak,tx_td,range,heading,es
      env_peak = [];
      range = [];
      heading = [];
+     added_env_pk_hd = [];
     end
 
+
 end
+
+ function time_offset = time_correction(time)
+ date_mark1= "20181028 01:00";
+ date_mark2= "20181029 01:00";
+ date_mark3= "20181030 01:00";
+ date_mark1 = datenum(date_mark1,'yyyymmdd HH:MM');
+ date_mark2 = datenum(date_mark2,'yyyymmdd HH:MM');
+ date_mark3 = datenum(date_mark3,'yyyymmdd HH:MM');
+ 
+ 
+ if time <= date_mark1
+     time_offset =  4/(3600*24);
+     
+ elseif (date_mark1 <= time)&(time <= date_mark2)
+     time_offset = 5/(3600*24);
+     
+ elseif (date_mark2 <= time)&(time<= date_mark3)
+     time_offset = 6/(3600*24);
+     
+ elseif  date_mark3 <= time
+     time_offset = 7/(3600*24);
+     
+ end
+ 
+ end
