@@ -148,7 +148,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <15.2);
+keep_ind = find(range <35);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 

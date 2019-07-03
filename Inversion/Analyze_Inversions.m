@@ -184,7 +184,7 @@ yticks(-5:5)
 xlim([0 26])
 xlabel('Range (km)')
 ylabel('TTP (ms)')
-title(sprintf('Reconstructed Measurements (%s)',hyd)')
+title(sprintf('Reconstructed Measurements (%s)',hyd))
 set(gca,'fontsize',12)
 cbar = colorbar;
 cbar.Label.String = 'Azimuth (degrees)' ;
