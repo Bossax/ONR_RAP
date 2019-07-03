@@ -6,9 +6,9 @@
 HEM_lat=22.738772;                  % June 2017
 HEM_lon=-158.006186;                %  June 2017
 
-day = 7:11 ;               %  Edit
-start_hour = 23;             % Edit
-end_hour = 4;              % EDIT
+day = 7:12 ;               %  Edit
+start_hour = 13;             % Edit
+end_hour = 5;              % EDIT
 
 % extract tx rx H
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR]  = tx_rx_extraction_June2017(day,start_hour,end_hour);
@@ -103,7 +103,7 @@ f_lasso_ic3 = 0.4082*r;
 f_lasso_ic4 = -0.0616*r;
 %% scope range
 rmin = 0;
-rmax = 30;
+rmax = 35;
 indl = (find(range >= rmin));
 indh = (find(range <= rmax));
 keep_ind = intersect(indl,indh);

@@ -233,7 +233,7 @@ ACO_lat = 22.738772;                  % June 2017
 ACO_lon = -158.006186;                % June2017
 
 %%% ACO Depth
-ACO_depth = -4729.92+2.32;          % original depth ellipsoid height
+ACO_depth = -4729.92;          % original depth ellipsoid height
 
 
  % 2. Tx File Directory
@@ -319,7 +319,7 @@ end
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Jun','2018');
 end
 
 %Estimate arrival time

@@ -131,7 +131,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <15.2);
+keep_ind = find(range <35.2);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -544,7 +544,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 15000;
+R = 25000;
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
 inc_ang =360/num_point;
@@ -908,7 +908,7 @@ ylabel('Frequency')
 xlabel('msec')
 %% 9. save file
 cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file/October2018
-save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_15kmlim icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lon tx_lat tx_heading
+save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_newrx icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lon tx_lat tx_heading
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)

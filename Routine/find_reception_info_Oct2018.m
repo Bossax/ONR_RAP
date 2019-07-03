@@ -230,8 +230,8 @@ ACO_lon = -158.006186;                % June2017
 % ACO_lon = -158.00617623                  % Oct 2018 from original depth
 
 %%% ACO Depth
-% ACO_depth = -4729.92;          % original depth ellipsoid height
-ACO_depth = -4734.58;            % Oct 2018 from original depth
+ACO_depth = -4729.92;          % original depth ellipsoid height
+% ACO_depth = -4734.58;            % Oct 2018 from original depth
 
 
 % ACO_depth = -4736.226+2.32;         % June 2018
