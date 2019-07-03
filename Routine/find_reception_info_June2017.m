@@ -191,7 +191,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/original_depth_raytrace_varGH
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/rx_file2/original_depth
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -225,20 +225,20 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_
 % ACO_lat = 22.738894;                  % original
 % ACO_lon = -158.006009;                % original
 
-% ACO_lat = 22.738772;                  % June 2017
-% ACO_lon = -158.006186;                % June2017
+ACO_lat = 22.738772;                  % June 2017
+ACO_lon = -158.006186;                % June2017
 
-ACO_lat= 22.738764;                  % June 2017 1st iteration
-ACO_lon= -158.0061781;               % June 2017
+% ACO_lat= 22.738764;                  % June 2017 1st iteration
+% ACO_lon= -158.0061781;               % June 2017
 
 
 
 %%% ACO Depth
-% ACO_depth = -4729.92;                         % original depth MSL
-ACO_depth = -4735.29;                          % June 2017 1st iteration
+ACO_depth = -4729.92;                         % original depth MSL
+% ACO_depth = -4735.29;                          % June 2017 1st iteration
 
  % 2. Tx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/tx_file %% EDIT
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/tx_file %% EDIT
 
 % 3. edit CTD file in the ray traing code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
