@@ -76,7 +76,7 @@ switch string(hydrophone)
     case  "HEM"
         % Load  HEM rx files
         % create a set of file names
-        cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/Tx_Rx_Output/rx_file/HEM/all/original_depth
+        cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2018/rx_file/original_depth
         fname = [];
         now_hour = start_hour;
         now_day = day(1);
@@ -121,8 +121,8 @@ switch string(hydrophone)
 
         for l = 1:length(tx_t)
             dum_arrival = act_arrival;
-            dum_arrival(find(dum_arrival < tx_t(l))) = [];          % shift forward in time 6 seconds
-            h_ind = find((tx_t(l) - dum_arrival)*3600*24 > -18);   % HEM is behind UTC for ~ 5-8sec
+            dum_arrival(find(dum_arrival < tx_t(l))) = [];          
+            h_ind = find((tx_t(l) - dum_arrival)*3600*24 > -18);   
             if isempty(h_ind)
                 rm_ind(end+1) = l;
             end

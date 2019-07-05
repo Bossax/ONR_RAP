@@ -13,7 +13,7 @@ icListen_lon = -158.0061254;
 day = 27:30 ;               %  Edit
 start_hour = 3;             % Edit
 end_hour = 14;              % EDIT
-hydrophone = "HEM";    % EDIT
+hydrophone = "icListen";    % EDIT
 % extract tx rx H
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 
@@ -329,10 +329,10 @@ c  = colorbar;
 c.Label.String =  'TTP (ms)';
 colormap jet
 grid on
-% caxis([-5 5])
+caxis([-5 5])
 % caxis([-4 16])
-xlabel('Long')
-ylabel('Lat')
+xlabel('Longitutde')
+ylabel('Latitude')
 axis tight
 title(' Travel Time Perturbation Map (icListen)')
 set(gca,'fontsize',16)
@@ -345,13 +345,13 @@ xlabel('travel time perturbation (ms)')
 grid on
 grid minor
 xticks(-8:8)
-% xlim([-6 6])
+xlim([-6 6])
 residual =ttp_p'-function2plot;
 RMS = rms(ttp_p - mean(ttp_p))
 med = median(ttp_p);
 set(gca,'fontsize',13)
 % title(sprintf('Histrogram: TTP Resdiual (Measurement - Function)\n Median = %.2f RMS = %.2f ms',med,RMS))
-title(sprintf('Histrogram (HEM): Travel Time Perturbation \n Median = %.2f RMS = %.2f ms',med,RMS))
+title(sprintf('Histrogram (icListen): Travel Time Perturbation \n Median = %.2f RMS = %.2f ms',med,RMS))
 %% for PSD ob
 % figure(10)
 % scatter(tx_t,theta_p,[],range_p,'.')

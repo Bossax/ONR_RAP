@@ -131,7 +131,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <35.2);
+keep_ind = find(range <15.2);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -349,7 +349,7 @@ P_post_newl = (P_post_tril+P_post_tril')-diag(diag(P_post_tril));
 P_post_new = (P_post_newu+P_post_newl)/2;
 
 
-% Arrange matrices
+%% Arrange matrices
 P_post_alpha = P_post_new;
 % recovered m
 m_recov1 = m_recov(1:tot_grid_num);
@@ -379,7 +379,7 @@ P_post1 = P_post_new(1:tot_grid_num,1:tot_grid_num);
 P_post2 = P_post_new(tot_grid_num+1:2*tot_grid_num,tot_grid_num+1:2*tot_grid_num);
 P_post3 = P_post_new(2*tot_grid_num+1:3*tot_grid_num,2*tot_grid_num+1:3*tot_grid_num);
 P_post4 = P_post_new(3*tot_grid_num+1:4*tot_grid_num,3*tot_grid_num+1:4*tot_grid_num);
-P_post_p = P_post(4*tot_grid_num+1:4*tot_grid_num+3,4*tot_grid_num+1:4*tot_grid_num+3);
+P_post_p = P_post_new(4*tot_grid_num+1:4*tot_grid_num+3,4*tot_grid_num+1:4*tot_grid_num+3);
 
 % 6.6 reshape the SS field
 recov_SS1=reshape(m_recov1(1:end),grid_num,grid_num)'  ;
@@ -429,7 +429,7 @@ sd_reduction4 = (post_SD4)./prior_SD4*100;
 sd_reduction_p = post_p./prior_p*100;
 
 
-%%%%%%% Depth Averaing %%%%%%%%%
+%% %%%%% Depth Averaing %%%%%%%%%
 % Combine 4 modes
 load('EOF_SS.mat')
 f1 = EOF_SS.mode1;
@@ -460,7 +460,7 @@ P_prior_d_avg = F_operator*P(1:end-3,1:end-3)*F_operator';
 P_SSP_d_avg = F_operator*P_post_alpha(1:end-3,1:end-3)*F_operator';
 
 
-% recalculate the SSP field
+%% recalculate the SSP field
 % reshape the SS field
 recov_SS_d_avg=reshape(SSP_d_avg2(1:end),grid_num,grid_num)'  ;
 % initial_SS_d_avg=reshape(SSP_d_avg1(1:end),grid_num,grid_num)'  ;
@@ -544,7 +544,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 25000;
+R = 15000;
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
 inc_ang =360/num_point;
@@ -908,7 +908,7 @@ ylabel('Frequency')
 xlabel('msec')
 %% 9. save file
 cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file/October2018
-save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_newrx icListen_lat icListen_lon icListen_depth G G_geninv d d_recov_ocean Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lon tx_lat tx_heading
+save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_newrx icListen_lat icListen_lon icListen_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)

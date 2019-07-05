@@ -158,6 +158,9 @@ try
     
     x_high=x_diff(t_high(1));
     
+    % check if there is a real solution
+    assert(isreal(x_high)) 
+    
     % Intrapolation to find the optimum ray arc length of the direct path
     theta_new=theta_low+((S)/((x_low-x_high)/(theta_low-theta_high)))-((x_low)/((x_low-x_high)/(theta_low-theta_high)));
     

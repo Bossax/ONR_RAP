@@ -140,7 +140,7 @@ title(sprintf('Reconstructed TTP Map from Ocean Perturbations (%s)',hyd))
 xlabel('Long')
 ylabel('Lat')
 set(gca,'fontsize',13)
-caxis([-3  3])
+caxis([-2  2])
 
 
 figure(4)

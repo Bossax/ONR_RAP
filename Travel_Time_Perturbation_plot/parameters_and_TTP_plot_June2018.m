@@ -15,7 +15,7 @@ start_hour = 23;             % Edit
 end_hour = 23;              % EDIT
 hydrophone = "HEM";    % EDIT
 % extract tx rx H
-[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,act_arrival,est_arrival] = tx_rx_extraction_June(day,start_hour,end_hour,hydrophone);
+[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR]  = tx_rx_extraction_June(day,start_hour,end_hour,hydrophone);
 
 %% Calculate parameters
 ttp = (act_arrival-real(est_arrival))*1000*3600*24;
@@ -203,7 +203,7 @@ cbar.Label.String = 'ms';
 colormap jet;
 title('Travel Time Perturbation: icListen')
 set(gca,'fontsize',18)
-caxis([-4 16]);
+caxis([-3 3]);
 
 
 % Lasso regression result

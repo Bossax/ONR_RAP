@@ -29,6 +29,7 @@ now_day = day(1);
 %% 2 Load Tx data
 % EDIT  tx file directory
 cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/1
 % create a set of file names
 fname = [];
 
@@ -76,7 +77,6 @@ for p = 1:length(fname)
     y_err = horzcat(y_err,tx_data.lat_err);
     z_err = horzcat(z_err,tx_data.altitude_err);
 end
-
 switch string(hydrophone)
 %%%%%%%%%%%%%%%%%%%% HEM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     case  "HEM"
@@ -84,7 +84,8 @@ switch string(hydrophone)
         % create a set of file names
 
       % rx file directory EDIT
-      cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
+%       cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/all/ideal_pulse
+      cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/2/HEM/original_depth
         fname = [];
         now_hour = start_hour;
         now_day = day(1);
@@ -174,7 +175,7 @@ switch string(hydrophone)
 
     case "icListen"
         % Load  icListen rx files  EDIT
-%         cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_depth
+%         cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/all
         cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/2/icListen/original_depth
         % create a set of file names
         fname = [];
@@ -214,6 +215,7 @@ switch string(hydrophone)
 
 
             %%%%%%%%%% Clean Data %%%%%%%%%%%%%%%%%%%%
+            %
             %%%%% icListen %%%%%%%
             rm_ind = [];
 
@@ -221,7 +223,7 @@ switch string(hydrophone)
                 dum_arrival = act_arrival;
                 dum_arrival(find(dum_arrival < tx_t(l))) = [];
                 % if greater than 20 sec = no reception was picked up
-                h_ind = find((tx_t(l) - dum_arrival)*3600*24 > -20);
+                h_ind = find((tx_t(l) - dum_arrival)*3600*24 > -34);
                 if isempty(h_ind)
                     rm_ind(end+1) = l;
                 end
@@ -244,7 +246,7 @@ switch string(hydrophone)
                 dum_tx_t = tx_t;
                  dum_tx_t(find( dum_tx_t > act_arrival(l))) = [];
                 % if greater than 20 sec = no reception was picked up
-                h_ind = find((act_arrival(l) - dum_tx_t)*3600*24 < 20);
+                h_ind = find((act_arrival(l) - dum_tx_t)*3600*24 < 32);
                 if isempty(h_ind)
                     rm_ind(end+1) = l;
                 end

@@ -16,9 +16,9 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 22:23;            %  Edit
+day = 22:22;            %  Edit
 start_hour = 22;            %  Edit
-end_hour = 0;           % EDIT
+end_hour = 23;           % EDIT
 
 
 
@@ -56,16 +56,13 @@ while true
     end
     d = dir(fname_d+"*");
     au_fname = vertcat(au_fname,d.name);
-     if now_hour >= 23
+    now_hour = now_hour+1;
+     if now_hour > 23  && now_day ~= day(end)
            now_hour = 0;
            now_day = now_day+1;
-       else
-           now_hour = now_hour+1;
-       end
-       
-       if now_hour > end_hour && now_day == day(end)
-           break;
-       end
+     elseif now_hour > end_hour && now_day == day(end)
+         break;
+     end
 end
 
 %% Find Actual Arrival Times
@@ -195,7 +192,7 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/Tx_Rx_Output/rx_file/HEM/all/original_depth
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2018/rx_file/original_depth
 
 %Save Variables
 rx_data.est_arrival = estimate;
@@ -237,7 +234,7 @@ ACO_depth = -4729.92;          % original depth ellipsoid height
 
 
  % 2. Tx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/Tx_Rx_Output/tx_file/all %% EDIT 
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2018/tx_file
 
 % 3. edit CTD file in the ray traing code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

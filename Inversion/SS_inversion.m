@@ -99,7 +99,7 @@ colormap jet
 
 %% 3. Download Tx data points
 % 3.1 download data files
-month = 'Oct'
+month = 'Jun'
 year = '2018'
 
 switch year
@@ -148,7 +148,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <35);
+keep_ind = find(range <15.2);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -445,7 +445,7 @@ sd_reduction3 = (post_SD3)./prior_SD3*100;
 sd_reduction4 = (post_SD4)./prior_SD4*100;
 sd_reduction_p = post_p./prior_p*100;
 
-%% %%%%% Depth Averaing %%%%%%%%%
+%%%%% Depth Averaing %%%%%%%%%
 % Combine 4 modes
 load('EOF_SS.mat')
 f1 = EOF_SS.mode1;
@@ -468,7 +468,7 @@ f2_avg = sum(f2(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 f3_avg = sum(f3(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 f4_avg = sum(f4(1:end-1).*(z(2:end)-z(1:end-1)))/z(end);
 
-%% depth averaging and mode combining operator
+% depth averaging and mode combining operator
 P_post_alpha = P_post_new;
 
 F_operator = [diag(ones(1,grid_num^2)*f1_avg) diag(ones(1,grid_num^2)*f2_avg) diag(ones(1,grid_num^2)*f3_avg) diag(ones(1,grid_num^2)*f4_avg)];
@@ -478,7 +478,7 @@ P_prior_d_avg = F_operator*P(1:end-3,1:end-3)*F_operator';
 P_SSP_d_avg = F_operator*P_post_alpha(1:end-3,1:end-3)*F_operator';
 
 
-%% recalculate the SSP field
+% recalculate the SSP field
 % reshape the SS field
 recov_SS_d_avg=reshape(SSP_d_avg2(1:end),grid_num,grid_num)'  ;
 % initial_SS_d_avg=reshape(SSP_d_avg1(1:end),grid_num,grid_num)'  ;
@@ -563,7 +563,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 25000;
+R = 15000;
 
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
@@ -586,7 +586,7 @@ imagesc(x_cen,y_cen,recov_SS1)
 colormap jet
 cbar = colorbar;
 cbar.Label.String = 'Sound Speed Perturbation (m/s)';
-caxis([-10 10])
+caxis([-5 5])
 title('Recovered SS Perturbation Field (1st mode)')
 hold on
 scatter(ACO_lon,ACO_lat,200,'pk','filled')
@@ -849,9 +849,9 @@ percent_g_data =  good_data/length(norm_res)*100;
 title(sprintf('Normalized Residual Median: %.3f, RMS: %.3f',median(residual),rms_res))
 set(gca,'fontsize',12)
 annotation('textbox',[.6 .8 0.1 .1],'String',[sprintf('%.2f',percent_g_data) '% of data is within +/-1'],'fontsize',11,'background','white');
-line([1 1],[0 3500],'color','red')
-line([-1 -1],[0 3500],'color','red')
-ylim([0 3500])
+line([1 1],[0 1500],'color','red')
+line([-1 -1],[0 1500],'color','red')
+ylim([0 1500])
 %% Histogram
 edges = -10.1:.2:10.1;
 counts = -10:0.2:10;
@@ -931,9 +931,9 @@ set(gca,'fontsize',14)
 line([0 50],[0 0],'color','k')
 ylim([0 1])
  %% 9. Save file
- cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file/October2018
+ cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file/June2018
 %  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
- save HEM_inverse_solution_October2018_originaldepth_L20km_sizing_2_txuncer  ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
+ save HEM_inverse_solution_June2018_originaldepth_L20km_sizing_2_txuncer_newrx  ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
 %% 10. write hydrophone position offsets to spreadsheet
 % filename = 'Hydrophone_Position.xlsx';
 % 
