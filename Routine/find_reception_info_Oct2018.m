@@ -185,8 +185,8 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
-
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
 %Save Variables
 rx_data.est_arrival = estimate;
 rx_data.act_arrival = act_arrival;
@@ -238,7 +238,8 @@ ACO_depth = -4729.92;          % original depth ellipsoid height
 % ACO_depth = -4734.870+2.32;        % ellipsoid height
 
  % 2. Tx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3  %% EDIT 
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3  %% EDIT 
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 
 % 3. edit CTD file in the ray traing code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

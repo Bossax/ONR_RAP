@@ -16,7 +16,7 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 27:30;            %  Edit
+day = 28:30;            %  Edit
 hour = 3:14;            %  Edit
 
 %%  Bandpass filter for icListen 2000 Hz to 6000 Hz
@@ -178,7 +178,9 @@ while true
     
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_position % EDIT
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_position % EDIT
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/icListen/original_depth2
+
 % Save Variables
 rx_data.est_arrival=estimate;
 rx_data.act_arrival=act_arrival;
@@ -237,8 +239,8 @@ icListen_depth = -4729.92+1.75;          % original depth ellipsoid height+ 1.75
 % icListen_depth = -4733.24;                    %  Oct 2018 from first iteraion
  
 % 2. Tx File Directory
-cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3")  %% EDIT 
-
+% cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3")  %% EDIT 
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 % 3. edit CTD file in the ray traing code
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,7 +292,7 @@ end
 % Estimated travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth);
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth,'Oct','2018');
 end
 
 % Estimated arrival time

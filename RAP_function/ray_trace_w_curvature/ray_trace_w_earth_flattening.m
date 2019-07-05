@@ -50,9 +50,12 @@ sal = D(:,3);         %salinity (Sp)
 sal = gsw_SA_from_SP(sal,pres_MSL,ACO_lon,ACO_lat);
 
 % Depths in the ellipsoidal coordinate 
+disp(ACO_lat)
+disp(ACO_lon)
 ACO_gh = geoidheight(ACO_lat,ACO_lon+360,'EGM96');
 z_td = -td_h;
-z_hyd = -ACO_depth+ACO_gh;      
+z_hyd = -ACO_depth+ACO_gh      
+
 
 
 %% 2 truncate CTD data to fit the range between the receiver depth and the source depth
