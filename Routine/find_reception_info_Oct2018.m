@@ -17,7 +17,7 @@ close all
 % hour = 14:5
 
 day = 27:30;            %  Edit
-hour = 3:14;            %  Edit
+hour = 4:14;            %  Edit
 
 
 
@@ -75,7 +75,7 @@ while true
     act_arrival=[];
     SNR=[];
     estimate = [];
-   
+    x_dist_kept = [];
     % store the current hour
     m = 1;
     wav_name = au_fname(counter,:);
@@ -144,7 +144,8 @@ while true
             if abs(arrival_diff*(3600*24))<0.05
                 estimate(end+1) = est(arrival_pos);
                 act_arrival(end+1)=arrivals(ii);   % concatenate that timestamp and corresponding snr
-                SNR(end+1)=demod_snr(ii);         
+                SNR(end+1)=demod_snr(ii);  
+                x_dist_kept(end+1) = x_dist(ii);
             end
 
 
@@ -185,12 +186,14 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
-
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
 %Save Variables
 rx_data.est_arrival = estimate;
 rx_data.act_arrival = act_arrival;
 rx_data.SNR = SNR;
+rx_data.x_dist = x_dist_kept;
+
 sname = mat_name(1:end-8);
 sname = ['rx_data' '_20' sname(1:2) '_' sname(3:4) '_' sname(5:6) '_' sname(8:9)]
 save(sname,'rx_data')
@@ -238,8 +241,8 @@ ACO_depth = -4729.92;          % original depth ellipsoid height
 % ACO_depth = -4734.870+2.32;        % ellipsoid height
 
  % 2. Tx File Directory
-cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3  %% EDIT 
-
+% cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/tx_file/all/3  %% EDIT 
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/tx_file
 % 3. edit CTD file in the ray traing code
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
