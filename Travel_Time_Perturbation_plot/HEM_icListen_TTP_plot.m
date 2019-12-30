@@ -15,8 +15,8 @@ start_hour = 3;         % Edit
 end_hour = 14;
 
 % extract tx rx information
-[tx_t_HEM,tx_lon_HEM,tx_lat_HEM,tx_heading_HEM,tx_altitude_HEM,tx_xvel_HEM,range_HEM,~,~,~,act_arrival_HEM,est_arrival_HEM,~] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
-[tx_t_icListen,tx_lon_icListen,tx_lat_icListen,tx_heading_icListen,tx_altitude_icListen,tx_xvel_icListen,range_icListen,~,~,~,act_arrival_icListen,est_arrival_icListen,~] = tx_rx_extraction_Oct(day,start_hour,end_hour,'icListen');
+[tx_t_HEM,tx_lon_HEM,tx_lat_HEM,tx_heading_HEM,tx_altitude_HEM,tx_xvel_HEM,range_HEM,~,~,~,act_arrival_HEM,est_arrival_HEM,SNR_HEM] = tx_rx_extraction_Oct(day,start_hour,end_hour,'HEM');
+[tx_t_icListen,tx_lon_icListen,tx_lat_icListen,tx_heading_icListen,tx_altitude_icListen,tx_xvel_icListen,range_icListen,~,~,~,act_arrival_icListen,est_arrival_icListen,SNR_icListen] = tx_rx_extraction_Oct(day,start_hour,end_hour,'icListen');
 
 % [tx_t_HEM,tx_lon_HEM,tx_lat_HEM,tx_heading_HEM,tx_altitude_HEM,tx_xvel_HEM,range_HEM,act_arrival_HEM,est_arrival_HEM] = tx_rx_extraction_June(day,start_hour,end_hour,'HEM');
 % [tx_t_icListen,tx_lon_icListen,tx_lat_icListen,tx_heading_icListen,tx_altitude_icListen,tx_xvel_icListen,range_icListen,act_arrival_icListen,est_arrival_icListen] = tx_rx_extraction_June(day,start_hour+3,end_hour+4,'HEM');
@@ -195,8 +195,7 @@ yticks(-20:2:20)
 colormap jet
 ylabel('TTP (ms)')
 xlabel('Azimuth (degree)')
-% ylim(yrange)
-ylim([0 20])
+
 headline = sprintf('square CW circle\nHEM Data  Median = %.2f ms ',median(ttp_HEM_crp));
 title(headline)
 xticks(0:30:360)
@@ -209,8 +208,7 @@ yticks(-20:2:20)
 colormap jet
 ylabel('TTP (ms)')
 xlabel('Azimuth (degree)')
-% ylim(yrange)
-ylim([0 16])
+
 headline = sprintf('square CW circle\nicListenData  Median = %.2f ms ',median(ttp_ic_crp));
 title(headline)
 xlim([0 360])

@@ -13,11 +13,12 @@ icListen_lon = -158.0061254;
 day = 27:30 ;               %  Edit
 start_hour = 3;             % Edit
 end_hour = 14;              % EDIT
-hydrophone = "icListen";    % EDIT
+hydrophone = "HEM";    % EDIT
 % extract tx rx H
-[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
+[tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,...
+    act_arrival,est_arrival,SNR]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 
-
+% [tx_t2,tx_lon2,tx_lat2,tx_heading2,tx_altitude2,tx_xvel2,range2,x_err,y_err,z_err,act_arrival2,est_arrival2,SNR]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 %% Calculate Azimuth and Heading relative to the ACO
 azmth = ones(length(tx_lat),1);
 % 0-360
@@ -83,6 +84,7 @@ end
 %}
 %% Calculate parameters
 ttp = (act_arrival-real(est_arrival))*1000*3600*24;
+% ttp2 = (act_arrival2-real(est_arrival2))*1000*3600*24;
 
 %% funtional form data fitting
 r = range';
@@ -114,6 +116,10 @@ keep_ind = intersect(indl,indh);
 
 range_p = range(keep_ind);
 ttp_p = ttp(keep_ind);
+tx_t_p = tx_t(keep_ind);
+% ttp_p2 = ttp2(keep_ind);
+SNR_p = SNR(keep_ind);
+azmth_p = azmth(keep_ind);
 theta_p = theta(keep_ind);
 rel_v_p =rel_v(keep_ind);
 f_lasso_p = f_lasso(keep_ind);
@@ -272,7 +278,7 @@ end
 figure(9)
 clf
 set(gcf,'Units','normalized','Position',[0.4 0.4 0.5 0.5])
-scatter(range,ttp,10,rel_v,'filled')
+scatter(range,ttp_p,30,tx_heading,'filled')
 hold on
 % scatter(range_p,function2plot,10,'k','filled')
 colormap jet 
@@ -280,15 +286,16 @@ cbar = colorbar;
 % ylim([-5 5])
 % caxis([0 360])
 % cbar.Label.String = 'Azimuth (Degrees)';
-cbar.Label.String = 'Relative Velocity (m/s)';
+% cbar.Label.String = 'Relative Velocity (m/s)';
 xlabel('Range (km)')
-ylabel('TTP (ms)')
-title('HEM Hydrophone: Travel time perturbation vs Range')
+ylabel('Travel Time Perturbation (ms)')
+title('Travel time pertrubation versus Range (Planar Ray Tracing)')
 grid on
 % yticks(-5:5)
 % legend('Actual Data','Function','location','northwest')
 %xlim([4 6])
-% ylim([-6 6])
+% ylim([-5 20])
+% ylim([0 0.6])
 set(gca,'fontsize',15)
 
 %% 4D
@@ -324,12 +331,12 @@ end
 f4 = figure(6);
 f4.Units = 'normalized';
 f4.Position = [0.0 0.5 0.5 0.6];
-scatter(tx_lon,tx_lat,20,ttp_p,'filled')%'-function2plot
+scatter(tx_lon,tx_lat,20,tx_xvel,'filled');
 c  = colorbar;
 c.Label.String =  'TTP (ms)';
 colormap jet
 grid on
-caxis([-5 5])
+% caxis([-5 5])
 % caxis([-4 16])
 xlabel('Longitutde')
 ylabel('Latitude')
@@ -339,24 +346,30 @@ set(gca,'fontsize',16)
 % title(' Travel Time Perturbation Residual (Measurement - Function): Map' )
 %% Histogram
 figure(7777)
-histogram(ttp_p,30); %'-function2plot
+data = ttp_p;
+histogram(data,30); %'-function2plot
 xlabel('travel time perturbation (ms)')
 % title('Histrogram: resdiual (Measurement - Function)')
 grid on
 grid minor
 xticks(-8:8)
 xlim([-6 6])
-residual =ttp_p'-function2plot;
-RMS = rms(ttp_p - mean(ttp_p))
-med = median(ttp_p);
+residual =data'-function2plot;
+RMS = rms(data - mean(data))
+med = median(data);
 set(gca,'fontsize',13)
 % title(sprintf('Histrogram: TTP Resdiual (Measurement - Function)\n Median = %.2f RMS = %.2f ms',med,RMS))
 title(sprintf('Histrogram (icListen): Travel Time Perturbation \n Median = %.2f RMS = %.2f ms',med,RMS))
-%% for PSD ob
-% figure(10)
-% scatter(tx_t,theta_p,[],range_p,'.')
-% datetick('x','HH:MM')
-% colormap jet
-% grid on
-% colorbar
-% yticks([0:30:360])
+%% SNR
+figure('Name','SNR')
+scatter(range,SNR_p,10,azmth_p,'filled')
+grid on
+colormap jet 
+cbar = colorbar;
+cbar.Label.String = 'Azimuth (Degrees)';
+xlabel('Range (km)')
+ylabel('SNR (dB)')
+title('HEM Hydrophone:SNR vs Range')
+
+set(gca,'fontsize',15)
+

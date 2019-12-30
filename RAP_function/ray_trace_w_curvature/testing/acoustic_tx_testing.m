@@ -39,7 +39,7 @@ xlabel('SS (m/s)')
 title('Sound Speed in shallow layer')
 grid on
 xlim([1532 1533])
-%% travel time of different path
+%% travel time of different paths (test if the second arrival is hull-reflected)
 % 1 direct
 x_dist =9000;      % 5km
 z_offset = 7.5;

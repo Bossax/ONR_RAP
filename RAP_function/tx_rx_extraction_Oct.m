@@ -85,7 +85,11 @@ switch string(hydrophone)
 
       % rx file directory EDIT
 %       cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/all/ideal_pulse
-      cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/2/HEM/original_depth
+%     cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/CTD_ref_ellip/HEM/original_depth
+%     cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/APL_ray_tracing/HEM
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/No_EFT/HEM/original_depth
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/spherical_ray_tracing/HEM
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/ENU
         fname = [];
         now_hour = start_hour;
         now_day = day(1);
@@ -176,7 +180,9 @@ switch string(hydrophone)
     case "icListen"
         % Load  icListen rx files  EDIT
 %         cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/all
-        cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/2/icListen/original_depth
+%         cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/CTD_ref_ellip2/icListen/original_depth
+%         cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/APL_ray_tracing/icListen
+        cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/No_EFT/icListen
         % create a set of file names
         fname = [];
         now_hour = start_hour;

@@ -140,7 +140,7 @@ title(sprintf('Reconstructed TTP Map from Ocean Perturbations (%s)',hyd))
 xlabel('Long')
 ylabel('Lat')
 set(gca,'fontsize',13)
-caxis([-2  2])
+caxis([-5  5])
 
 
 figure(4)
@@ -213,9 +213,11 @@ c.Ticks = 0:5:30;
 caxis([0 30])
 colormap jet
 line([0 360],[0 0],'Color','k','Linewidth',2,'Linestyle','--')
-
-subplot(1,2,2)
-scatter(azmth,d_recov_ocean*1000,[],range,'filled')
+%%
+% subplot(1,2,2)
+figure(119)
+hold on
+scatter(azmth,d_recov_ocean_HEM*1000,10,range,'x')
 grid on
 xticks(0:60:360)
 xticks(0:30:360)

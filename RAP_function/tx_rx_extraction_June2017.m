@@ -78,7 +78,7 @@ end
 
 % Load  HEM rx files
 % create a set of file names
-cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/rx_file2/original_depth
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/rx_file/original_depth
 fname = [];
 now_hour = start_hour;
 now_day = day(1);

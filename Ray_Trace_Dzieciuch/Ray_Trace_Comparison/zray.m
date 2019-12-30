@@ -23,9 +23,8 @@ function zry=zray( theta0, srcdep, rgsv, reltol);
   [c0, cz0]=zrayc(srcdep, rstart);
 
   idt=1; idz=2; idp=3; idw=4; ids=5;
-nray
+
   for ir=1:nray
-      ir
     % write out angle being launched.
     %fprintf('theta0: %7.3f', theta0(ir));
 

@@ -46,16 +46,15 @@ zenv=zrayenv( zw, ssr, ssc, bthr, bthz);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %raytrace accuracy
 rtol=1e-6;
-fprintf('raytrace accuracy\n')
+
 zry=zray( theta0, srcdep, rgsv, rtol);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%Find theta0 limits%%%%%
-fprintf('Bottom Bounce\n')
+
 %First Bottom Bounce
-length(zry)
 for i=1:length(zry)
     if isempty(zry(i).zltp)~=1
         break

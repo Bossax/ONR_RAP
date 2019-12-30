@@ -1,0 +1,3 @@
+Correct the sound speed profile calculation function and the hydrophone depth
+- The old code used the ellipsoidal height to calculate SSP —> change to CTD height
+- the geoid height was added in the wrong direction to the hydrophone orthometric height —> subtracted instead of adding

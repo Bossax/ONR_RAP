@@ -17,7 +17,7 @@ close all
 % hour = 14:5
 
 day = 7:12;            %  Edit
-start_hour = 13            %  Edit
+start_hour = 15            %  Edit
 end_hour = 5;           % EDIT
 
 
@@ -82,7 +82,7 @@ while true
     act_arrival=[];
     SNR=[];
     estimate = [];
-
+    surface_range = [];
     % store the current hour
     m = 1;
     wav_name = au_fname(counter,:);
@@ -145,12 +145,13 @@ while true
          % Match the calculated actual arrival time with the estimated time calculated in the previous section
         for ii=1:length(arrivals)
             [arrival_diff,arrival_pos]=min(abs(est-arrivals(ii)));
-            arrival_diff*(3600*24)
+            disp(arrival_diff*(3600*24)*1000)
           % if the discrepency is less than 50 ms
             if abs(arrival_diff*(3600*24))<0.05
                 estimate(end+1) = est(arrival_pos);
                 act_arrival(end+1)=arrivals(ii);   % concatenate that timestamp and corresponding snr
                 SNR(end+1)=demod_snr(ii);
+                surface_range(end+1) = x_dist(ii);
             end
 
 
@@ -164,6 +165,8 @@ while true
             while true
                 if min(abs(estimate(k) - act_arrival)*3600*24) > 0.05
                     estimate(k) = [];
+                    surface_range(k) = [];
+                    SNR(k) = [];
                 else
                     k = k+1;
                 end
@@ -176,7 +179,7 @@ while true
 
 
         counter = counter+2;
-        m = m+1;
+        cm = m+1;
         % check if the file jumps to the next hour
         if counter > len
             break;
@@ -191,12 +194,13 @@ while true
     end
 %% Save hourly file
 % 3. Rx File Directory
-cd /Volumes/ACO_RAP_2/RAP/June2017Cruise/Tx_Rx_Output/rx_file/original_depth_raytrace_varGH
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/June2017/rx_file/No_EFT
 
 %Save Variables
 rx_data.est_arrival = estimate;
 rx_data.act_arrival = act_arrival;
 rx_data.SNR = SNR;
+rx_data.x_dist = surface_range;
 sname = mat_name(1:end-8);
 sname = ['rx_data' '_20' sname(1:2) '_' sname(3:4) '_' sname(5:6) '_' sname(8:9)]
 save(sname,'rx_data')
@@ -320,7 +324,7 @@ end
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Jun','2017');
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'June','2017','NoEFT');
 end
 
 %Estimate arrival time

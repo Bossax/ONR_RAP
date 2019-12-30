@@ -11,7 +11,7 @@ clear
 close all
 %%%%%%%%
 day = 27:27 ;              %  Edit
-start_hour = 5;            % Edit
+start_hour = 3;            % Edit
 end_hour = 12;             % Edit
 Fs = 24000;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

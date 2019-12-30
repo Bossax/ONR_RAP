@@ -28,7 +28,7 @@ icListen_depth = -4729.92 +1.75;            % original depth MSL
 
 % Initialize the domain
 L = 60000;      % meter EDIT
-grid_num = 49;  % grid_num x grid_num  pixels EDIT
+grid_num = 25;  % grid_num x grid_num  pixels EDIT
 tot_grid_num = grid_num^2;
 
 [~,lat_u,~] = m_fdist(icListen_lon,icListen_lat,0,L);
@@ -131,7 +131,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <15.2);
+keep_ind = find(range <35.2);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -429,7 +429,7 @@ sd_reduction4 = (post_SD4)./prior_SD4*100;
 sd_reduction_p = post_p./prior_p*100;
 
 
-%% %%%%% Depth Averaing %%%%%%%%%
+% %%%%% Depth Averaing %%%%%%%%%
 % Combine 4 modes
 load('EOF_SS.mat')
 f1 = EOF_SS.mode1;
@@ -544,7 +544,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 15000;
+R = 25000;
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
 inc_ang =360/num_point;
@@ -623,12 +623,13 @@ colormap jet
 %% Depth-Averaged solution
 figure(21)
 clf
-set(gcf,'name','2-D sound speed perturbation field','Units','normalized','Position',[0 0.1 0.35 .4])
+set(gcf,'name','2-D sound speed perturbation field','Units','normalized','Position',[0 0.1 0.35 .42])
 imagesc(x_cen,y_cen,recov_SS_d_avg)
 colormap jet
 cbar = colorbar;
 cbar.Label.String = 'Sound Speed Perturbation (m/s)';
-title('Depth-Averaged SSP Field: No Filtering (icListen)')
+% title('Depth-Averaged SSP Field (icListen)')
+title('Sound Speed Perturbation Difference (icListen - HEM)')
 hold on
 scatter(icListen_lon,icListen_lat,200,'pk','filled')
 plot(x_cir,y_cir,'k')
@@ -908,7 +909,7 @@ ylabel('Frequency')
 xlabel('msec')
 %% 9. save file
 cd /Users/testuser/Documents/ONR_RAP/Data/inversion_file/October2018
-save icListen_inverse_solution_Oct2018_originaldepth_L20km_sizing_2_txuncer_newrx icListen_lat icListen_lon icListen_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
+save icListen_inverse_solution_Oct2018_originaldepth_newraytrace_Aug2019 icListen_lat icListen_lon icListen_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
 
 %% %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [P,var_c] = gaussian_cov_mx(x,y,mode)

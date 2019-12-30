@@ -8,9 +8,9 @@
 clear
 close all
 
-day = 27:30 ;            %  Edit
+day = 27:27 ;            %  Edit
 start_hour = 3;         % Edit
-end_hour = 14;          % Edit
+end_hour = 12;          % Edit
 Fs = 24000;
 
 %% Load audio file name
@@ -169,7 +169,7 @@ while true
              ttp_snr_sig_data.range = tx_range;
              ttp_snr_sig_data.heading = heading;
              sname = "ttp_snr_sig_data"+ "_2018_10_"+string(now_day)+ "_"+ string(save_hour)
-             cd '/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/ttp_snr_plot/HEM'
+             cd '/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/ttp_snr_plot/HEM_spherical_ray_tracing'
              save(sname,'ttp_snr_sig_data' );
 
               Arrival_signal = [];               % Output matrix
@@ -211,6 +211,7 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(day,
     
     ACO_lat = 22.7387643                     % Oct 2018 from original depth
     ACO_lon = -158.00617623                  % Oct 2018 from original depth
+%     ACO_depth = -4729.92                    % original depth
     
     ACO_depth = -4734.58;            % Oct 2018 from original depth
     
@@ -262,7 +263,7 @@ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(day,
 
     for ii=1:length(x_dist)
      azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Oct','2018');
+    [~,~,~,~,~,~,~,~,est_tt(ii),~,~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Oct','2018','spherical');
     end
 
     %Estimate arrival time

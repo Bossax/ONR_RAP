@@ -36,7 +36,7 @@ ACO_depth =  -4729.92;                 % Original depth MSL
 
 % Initialize the domain
 L = 60000;      % meter EDIT
-grid_num = 49;  % grid_num x grid_num  pixels EDIT
+grid_num = 25;  % grid_num x grid_num  pixels EDIT
 tot_grid_num = grid_num^2;
 
 [~,lat_u,~] = m_fdist(ACO_lon,ACO_lat,0,L);
@@ -99,7 +99,7 @@ colormap jet
 
 %% 3. Download Tx data points
 % 3.1 download data files
-month = 'Jun'
+month = 'Oct'
 year = '2018'
 
 switch year
@@ -148,7 +148,7 @@ switch year
 end
 
 % limit range
-keep_ind = find(range <15.2);
+keep_ind = find(range <315.2);
 
 % 3.2 travel time perturbation
 ttp_origin = (act_arrival - est_arrival)*3600*24*1000; 
@@ -252,6 +252,7 @@ Ghyd = real(Ghyd);
 G = [G1 G2 G3 G4 Ghyd];
 
 %% plot elements of the observation matrix
+debug_obs = true;
 if debug_obs
     
     figure(4)
@@ -563,7 +564,7 @@ recov_SS_d_avg2 = reshape(SSP_d_avg22(1:end),grid_num,grid_num)'  ;
 %}
 %% 7. plot the recovered ss pertrubation field
 % draw circle
-R = 15000;
+R = 25000;
 
 num_point = 2000;
 xpoint = linspace(lon_l,lon_u,num_point);
@@ -643,12 +644,12 @@ colormap jet
 %% Depth-Averaged solution
 figure(23)
 clf
-set(gcf,'name','2-D sound speed perturbation field','Units','normalized','Position',[0 0.1 0.34 .4])
+set(gcf,'name','2-D sound speed perturbation field','Units','normalized','Position',[0 0.1 0.35 .42])
 imagesc(x_cen,y_cen,recov_SS_d_avg)
 colormap jet
 cbar = colorbar;
 cbar.Label.String = 'Sound Speed Perturbation (m/s)';
-title('Depth-Averaged SSP Field: No Filtering (HEM)')
+title('Depth-Averaged SSP Field (HEM)')
 hold on
 scatter(ACO_lon,ACO_lat,200,'pk','filled')
 plot(x_cir,y_cir,'k')
@@ -931,9 +932,9 @@ set(gca,'fontsize',14)
 line([0 50],[0 0],'color','k')
 ylim([0 1])
  %% 9. Save file
- cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file/June2018
+ cd /Users/testuser/Documents/ONR_RAP/Data/Inversion_file/October2018
 %  save HEM_inverse_solution_June2018 ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z W 
- save HEM_inverse_solution_June2018_originaldepth_L20km_sizing_2_txuncer_newrx  ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
+ save HEM_inverse_solution_Oct2018_originaldepth_L20km_newraytrace_Aug2019  ACO_lat ACO_lon ACO_depth G G_geninv d Cd P P_mode1 P_mode2 P_mode3 P_mode4 P_p P_prior_d_avg P_post_p P_post_new P_SSP_d_avg Res_mat Res_mat_d_avg SSP_d_avg2 m_recov x_cen y_cen z tx_lat tx_lon tx_heading range tot_grid_num
 %% 10. write hydrophone position offsets to spreadsheet
 % filename = 'Hydrophone_Position.xlsx';
 % 

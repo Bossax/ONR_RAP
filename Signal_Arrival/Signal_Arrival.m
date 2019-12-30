@@ -29,70 +29,88 @@ Rs = 30; % -40 dB stopband attenuation
 [b,a] = butter(n,Wn,'bandpass');
 [h,w] = freqz(b,a,300);
 
-%% Load reception times of an interest interval
+%% Load transmission and reception times of an interest interval
+day = 27:27 ;               %  Edit
+start_hour = 4;             % Edit
+end_hour = 4;              % EDIT
+hydrophone = "HEM";    % EDIT
+% extract tx 
+[t_tx,tx_lon,tx_lat,~,tx_altitude,~,range,~,~,~,~,~,~]  = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 
-cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/Tx_Rx_Output/rx_files_arrival
+%% create a list of audio file names
 
-load('rx_data_ccw.mat')       % Edit
-act_arrival = rx_data.act_arrival;
-demod_num = 1;
-
-
-%% Load transmission times of an interest interval
-
-cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/Tx_Rx_Output/tx_file_path/CCW
-d_tx=dir('tx_data_*.mat');
-lat = [];
-lon = [];
-t_tx = [];
-
-% Cut out unusable data points 
-
-for p = 1:length(d_tx)
-    rm_ind = [];
-    fname = d_tx(p).name;
-    load(fname)
-    t_dum = tx_data.t;
-    lat_dum = tx_data.lat;
-    lon_dum = tx_data.lon;
-    for ii = 1:length(t_dum)
-        gap = (act_arrival-t_dum(ii))*3600*24;
-        if isempty(find(0 < gap & gap < 28))
-           rm_ind(end+1) = ii; 
-        end
+au_fname = [];
+now_hour = start_hour;
+now_day = day(1);   
+while true
+    cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/HEM/" + string(now_day)+"_Oct")
+    if now_hour < 10
+        fname_d = "1810"+string(now_day)+"-0"+string(now_hour);
+    else
+        fname_d = "1810"+string(now_day)+"-"+string(now_hour);
     end
-    t_dum(rm_ind) = [];
-    lat_dum(rm_ind) = [];
-    lon_dum(rm_ind) = [];
-    t_tx = horzcat(t_tx,t_dum);                      % Transmission timestamps
-    % store lat and lon data
-    lat = horzcat(lat,lat_dum);
-    lon = horzcat(lon,lon_dum);
+    d = dir(fname_d+"*");
+    au_fname = vertcat(au_fname,d.name);
+     if now_hour >= 23
+           now_hour = 0;
+           now_day = now_day+1;
+       else
+           now_hour = now_hour+1;
+       end
+       
+       if now_hour > end_hour && now_day == day(end)
+           break;
+       end
 end
-lat = transpose(lat);
-lon = transpose(lon);
-
-%% find matching timestamps in the hydrophone file
+%% find matching timestamps of the arrivals in the hydrophone file
 add_nx = 0;
 add_nx2 = 0;
+tx_from_pre  = [];
+tx_sd2nex  = [];
+t_zeropad_sam = [];
+l_zeropad_sam = [];
 y_len = [];
-% Deal with one audio file at a time
-cd /Volumes/ACO_RAP_2/RAP/June2018Cruise/wav_data/Hydrophone_Raw/Hydrophone_Data/CCW% Edit
-hyd = dir('18*');
-addpath('/Volumes/ACO_RAP_2/RAP/June2018Cruise/Script/Signal_Arrival')
 
-for jj = 1:2:length(hyd)-1
-    (jj+1)/2
-    mat_name = hyd(jj).name;
-    wav_name = hyd(jj+1).name; 
+% deal with one audio file at a time 
+for jj = 1:2:length(au_fname)-1
+    
+    
+    % store the current hour
+    
+    mat_name = au_fname(jj,:);
+    wav_name = au_fname(jj+1,:);
+    current_day = str2num(wav_name(5:6));
+    current_hour = str2num(wav_name(8:9));
+    % Audio File Directory
+    cd("/Volumes/ACO_RAP_2/RAP/Oct2018Cruise/wav_data/HEM/"+string(now_day)+"_Oct")
+   
     
     %Load Audio Data
     [y,t_date] = hyd_audio_prep(mat_name,wav_name);
+    disp(datestr(t_date(1)))
     y = y';
     
+    % Load rx file
+    cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/CTD_ref_ellip/HEM/original_depth
+    
+    
+    if current_hour < 10
+        fname = "rx_data_2018_10_"+string(current_day)+"_0"+string(current_hour);
+    else
+        fname = "rx_data_2018_10_"+string(current_day)+"_"+string(current_hour);
+    end
+  
+    load(fname+".mat")
+    t_rx =rx_data.est_arrival;
+    act_arrival = rx_data.act_arrival;
+    
+    
+        
     % Filtering
-    y = filter(b,a,y);
-    t_rx = t_date;
+    yf = filter(b,1,y);
+    delay = round(mean(grpdelay(b,1,6000,Fs)));      % group delay
+    yf = yf(delay+1:end);                       % shift output signal forward in time
+    yf(end+1:end+1+delay-1) = zeros(delay,1);
 
     % find indices in rx times that are close to tx times
     ind = zeros(1,length(t_tx));                % indices of transmission timestamps in rx times
@@ -121,9 +139,9 @@ for jj = 1:2:length(hyd)-1
 
     % Generate Envelope signal
     load LFM_pulse_sample.mat                         % Replica pulse for cross correlation
-    [xc,lag]=xcorr(y,replica_pulse);
-    xc(1:find(lag==0)-1)=[];    
-    demod=abs(hilbert(xc)); 
+    [xc,lag] = xcorr(yf,replica_pulse);
+    xc(1:find(lag==0)-1) = [];    
+    demod = abs(hilbert(xc)); 
      
     % find indices in rx times that are close to demod peak time (arrival time) 
         ind_act = zeros(1,length(act_arrival));         % indices of demod peak timestamps in the audio file           
@@ -215,7 +233,7 @@ for jj = 1:2:length(hyd)-1
         taxis = 0:1/Fs:1/Fs*(len-1); 
         
          %%%%%%%%Plotting%%%%%%%%
-         %{     
+            
         figure(1)
         clf
         subplot(2,1,1)

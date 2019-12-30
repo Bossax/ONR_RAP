@@ -1,12 +1,14 @@
 function [v, vz]=zrayc( z, x)
+% takes in depth and horizontal range
+% return sound speed and gradient
   global zenv
 
   nr=length(zenv.ssr);
   nd=length(zenv.ssz);
   ndm1=nd-1;
 
-  u=1+(nr-1)*x/zenv.ssr(nr);
-  ir=floor(u);
+  u = 1+(nr-1)*x/zenv.ssr(nr);
+  ir = floor(u);
   if(ir<1)
     ir=1;
   elseif(ir>(nr-1))

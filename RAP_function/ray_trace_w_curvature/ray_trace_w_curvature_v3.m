@@ -1,4 +1,4 @@
-function [arc_lengths,tot_dist,theta0,SS_new,z_new,SS_HOT_avg,surface_dist,est_tt,ray_angles ] = ray_trace_w_curvature_v3(x_dist,z_offset)
+function [arc_lengths,tot_dist,theta0,SS_new,z_new,SS_HOT_avg,surface_dist,est_tt,ray_angles ] = ray_trace_w_curvature_v3(x_dist,z_offset,ACO_lat,ACO_lon,ACO_depth,month,year)
 %READ_CTD_HOTS Summary of this function goes here
 %%%%%%%%%NOTE: THEORETICAL MAX RANGE ALLOWABLE IS 29.7 km%%%%%%%%%%%%
 %%%%%%%%%NOTE: THEORETICAL MAX RANGE ALLOWABLE IS 29.50 km%%%%%%%%%%%%
@@ -9,25 +9,32 @@ function [arc_lengths,tot_dist,theta0,SS_new,z_new,SS_HOT_avg,surface_dist,est_t
 % 4. enthalpy
 %%%%% inputs %%%%%%%%%%%%
 % 1. surface distances = x_dist (single value)
-% 2. ship altitudes = z_offset  ( single value)
+% 2. transducer altitudes = z_offset  ( single value)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%% 1. CTD data (MSL)
+% CTD file directory
 % cd '/Users/testuser/Documents/MATLAB/Script/Data'
-% fid=fopen('h294a0202.ctd');                       % June 2017
-% fid = fopen('h302a0201.ctd');                    % June 2018
-fid=fopen('h306a0202.ctd');                       % October 2018
-
+if year == '2017'
+    fid=fopen('h294a0202.ctd');                       % June 2017
+elseif year == '2018'
+    switch month
+        case 'Jun'
+            fid = fopen('h302a0201.ctd');                    % June 2018
+        case 'Sep'
+            fid = fopen('h305a0202.ctd');                       % 10 Sep 2018
+        case 'Oct'
+            fid=fopen('h306a0202.ctd');                       % 12 October 2018
+        case 'Nov'
+            fid=fopen('h307a0202.ctd');                       % 16 November 2018
+    end
+end
 D=cell2mat(textscan(fid,'%f%f%f%f%f%f%f%f','headerlines',6));
 fclose(fid);
 
-% ACO_lat=22.738772;                  % June 2018
-% ACO_lon=-158.006186;                % June2018  
-
-ACO_lat = 22.73911569;                  % March 2019 #3 ic
-ACO_lon = -158.006106601;                % March 2019 ic
+%{
 % HEMs        
-%z_dist=4811.4;      %Hydrophone pressure at 4728m depth
-z_dist=4812.7+.669;      %Paroscientific pressure sensor (dbar) + hyd depth 4729.92 m 
+% z_dist=4811.4;      %Hydrophone pressure at 4728m depth
+% z_dist = 4812.7+.669;      %Paroscientific pressure sensor (dbar) + hyd depth (4729.92 m) 
 % z_dist = 4819.897;     % at 4,736.266 m June 2017
 %z_dist = 4822.107;   % at 4,738.415 m June 2018
 % z_dist = 4818.461;  % at 4734.870 m March 2019 #2
@@ -40,7 +47,10 @@ z_dist=4812.7+.669;      %Paroscientific pressure sensor (dbar) + hyd depth 4729
 
 %hyd_depth=4728+6.346;      % Hydrophone depth June 2017
 %hyd_depth = 4736.494;      % Sep 2018
+%}
 %%%%%%%%%%%%
+
+z_dist = gsw_p_from_z(ACO_depth,ACO_lat);
 
 pres=D(:,1);        %pressure (dbars)
 temp=D(:,2);        %temperature

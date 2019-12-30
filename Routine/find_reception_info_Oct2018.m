@@ -16,9 +16,9 @@ close all
 % day = 27:28
 % hour = 14:5
 
-day = 27:30;            %  Edit
-hour = 4:14;            %  Edit
-
+day = 28:30;            %  Edit
+start_hour = 1;            %  Edit
+end_hour = 14;
 
 
 %%  Bandpass filter for HEM 2000 Hz to 6000 Hz
@@ -33,11 +33,11 @@ devs = [0.01 0.05 0.01];
 b= fir1(n,Wn);
 [h,freq] = freqz(b,1,16000,Fs);
 
-%% Actaul Arrival
+%% Actual Arrival
 
 % create a set of file names
 au_fname = [];
-now_hour = hour(1);
+now_hour = start_hour;
 now_day = day(1)
 
 while true
@@ -56,30 +56,33 @@ while true
            now_hour = now_hour+1;
        end
        
-       if now_hour > hour(end) && now_day == day(end)
+       if now_hour > end_hour && now_day == day(end)
            break;
        end
 end
 
 %% Find Actual Arrival Times
-now_hour = hour(1);
+now_hour = start_hour;
 now_day = day(1)
 counter = 1;
 [len,~] = size(au_fname);
 while true
      
     % Load Tx File and Calculate Estimated Travel Time of this 1 hour
-    [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour);
+    [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival,arc_length,hyd_depth,ray_trace_x_dist] = posmv_tx_load(now_day,now_hour);
     
     % hourly file
     act_arrival=[];
     SNR=[];
     estimate = [];
     x_dist_kept = [];
+    arclength_kept = [];
+    hyd_depth_kept = [];
+    ray_trace_x_dist_kept = [];
     % store the current hour
     m = 1;
     wav_name = au_fname(counter,:);
-    current_hour = str2num(wav_name(8:9))
+    current_hour = str2num(wav_name(8:9));
     
     % Loop over minutes in the hour
     while true
@@ -95,28 +98,36 @@ while true
         [y,t_date] = hyd_audio_prep(mat_name,wav_name);
         time_offset = time_correction(t_date(1));
         t_date = t_date - time_offset;      % HEM time is ahead UTC time
-        datestr(t_date(1))
+        disp({'file date',datestr(t_date(1))})
         
         % Filtering
         yf = filter(b,1,y); 
         delay = round(mean(grpdelay(b,1,6000,Fs)));      % group delay
-        yf = yf(delay+1:end);                       % shift output signal forward in time
+        yf = yf(delay+1:end);                            % shift output signal forward in time
         yf(end+1:end+1+delay-1) = zeros(delay,1); 
 
 
         % drop out est_arrival outside this 5-min time frame
         if m == 1
-            est = est_arrival(find(est_arrival > t_date(1)));
-            datestr(est(1))
+            drop_pos = find(est_arrival < t_date(1));
+            est_arrival(drop_pos) = [];
+            est = est_arrival;
+            x_dist(drop_pos) = [];
+            arc_length(drop_pos) = [];
+            hyd_depth(drop_pos) = [];
+            ray_trace_x_dist(drop_pos) = [];
+            disp(datestr(est(1)))
         end
         
         %%%%%%Cross Correlation%%%%%%
 
-        [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_ideal(yf);
+        [demod,demod_pos,demod_max,demod_snr] = ACO_cross_correlation_ideal(y);
          % Arrival timestamps
          arrivals=t_date(demod_pos);
-         %{
+         
          % for debugging
+         %{
+         
          figure(1)
          clf
          plot(t_date,demod)
@@ -137,15 +148,20 @@ while true
          %}
          
          % Match the calculated actual arrival time with the estimated time calculated in the previous section
-        for ii=1:length(arrivals)
-            [arrival_diff,arrival_pos]=min(abs(est-arrivals(ii)));
-            arrival_diff*(3600*24)
-          % if the discrepency is less than 50 ms 
-            if abs(arrival_diff*(3600*24))<0.05
-                estimate(end+1) = est(arrival_pos);
+         % loop over picked actual arrivals
+         for ii=1:length(arrivals)
+            [tt_diff,est_pos]=min(abs(est-arrivals(ii)));
+            disp(tt_diff*(3600*24)*1000)
+            
+          % if the travel time perturbation is less than 50 ms 
+            if abs(tt_diff*(3600*24))<0.05
+                estimate(end+1) = est(est_pos);
                 act_arrival(end+1)=arrivals(ii);   % concatenate that timestamp and corresponding snr
                 SNR(end+1)=demod_snr(ii);  
-                x_dist_kept(end+1) = x_dist(ii);
+                x_dist_kept(end+1) = x_dist(est_pos);
+                arclength_kept(end+1) = arc_length(est_pos);
+                hyd_depth_kept(end+1) = hyd_depth(est_pos);
+                ray_trace_x_dist_kept(end+1) = ray_trace_x_dist(est_pos);
             end
 
 
@@ -187,12 +203,20 @@ while true
 %% Save hourly file
 % 3. Rx File Directory
 % cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/HEM/final/Oct/original_position
-cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/HEM/original_depth
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/ENU
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/No_EFT/HEM/2nd_depth
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/spherical_ray_tracing/HEM
+
 %Save Variables
 rx_data.est_arrival = estimate;
 rx_data.act_arrival = act_arrival;
 rx_data.SNR = SNR;
 rx_data.x_dist = x_dist_kept;
+rx_data.arclength = arclength_kept;
+rx_data.hyd_depth_kept = hyd_depth_kept;
+rx_data.ray_trace_x_dist_kept = ray_trace_x_dist_kept;
+
 
 sname = mat_name(1:end-8);
 sname = ['rx_data' '_20' sname(1:2) '_' sname(3:4) '_' sname(5:6) '_' sname(8:9)]
@@ -206,16 +230,17 @@ else
     now_day = now_day+1
 end
 
-if (now_hour > hour(end))& (now_day == day(end))
+if (now_hour > end_hour)& (now_day == day(end))
     break;
 end  
      
 end
 
-
-
+% 
+% cd /Users/testuser/Documents/ONR_RAP/Routine
+% find_reception_info_icListen_Oct2018 
 %% Functions 
-function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour);
+function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival,tot_arc_length,depth,surface_dist] = posmv_tx_load(now_day,now_hour);
 % setup
 % 1. Hydrophone Position and Depth
 %%% ACO LAT/LON
@@ -233,8 +258,8 @@ ACO_lon = -158.006186;                % June2017
 % ACO_lon = -158.00617623                  % Oct 2018 from original depth
 
 %%% ACO Depth
-ACO_depth = -4729.92;          % original depth ellipsoid height
-% ACO_depth = -4734.58;            % Oct 2018 from original depth
+% ACO_depth = -4729.92;              % original depth MSL
+ACO_depth = -4734.58;            % Oct 2018 from original depth
 
 
 % ACO_depth = -4736.226+2.32;         % June 2018
@@ -293,18 +318,23 @@ end
 
 x_dist = [];
 est_tt = [];
-
-% Geodic Length
-for ii=1:length(tx_lat)
-    x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon,referenceEllipsoid('WGS84'));
-end
-
-
+depth = [];
+tot_arc_length = [];
+surface_dist = [];
+% Geodetic Length
+% for ii=1:length(tx_lat)
+%     x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon,referenceEllipsoid('WGS84'));
+% end
+[x_dist,depth] = geodetic2enu(tx_lat,tx_lon,tx_altitude,ACO_lat,ACO_lon,ACO_depth);
+ACO_depth_enu = -depth-tx_altitude;
 %Estimate travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),ACO_lat,ACO_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth,'Oct','2018');
+    [~,tot_arc_length(ii),~,~,z_flt,~,dis,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),ACO_lat,ACO_lon,ACO_depth_enu(ii),'Oct','2018',1);
+%     depth(ii) = z_flt(end);
+    surface_dist(ii) = sum(dis);
 end
+
 
 %Estimate arrival time
 est_arrival=tx_t+(est_tt./(3600*24));
@@ -333,5 +363,7 @@ end
      time_offset = 7/(3600*24);
      
  end
+ 
+ 6
  
  end

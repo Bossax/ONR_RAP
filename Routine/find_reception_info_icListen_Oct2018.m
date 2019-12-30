@@ -66,13 +66,16 @@ counter = 1;
 while true
     
     % Load Tx File and Calculate Estimated Travel Time of this 1 hour
-    [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour);
+    [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival,arc_length,hyd_depth,ray_trace_x_dist] = posmv_tx_load(now_day,now_hour);
     
     % hourly file
     act_arrival=[];
     SNR=[];
     estimate = [];
     x_dist_kept = [];
+    arclength_kept = [];
+    hyd_depth_kept = [];
+    ray_trace_x_dist_kept = [];
     % store the current hour
     m = 1;
     wav_name = au_fname(counter,:);
@@ -133,14 +136,17 @@ while true
          
          % Match the calculated actual arrival time with the estimated time calculated in the previous section
         for ii=1:length(arrivals)
-            [arrival_diff,arrival_pos]=min(abs(est-arrivals(ii)));
-            arrival_diff*(3600*24)
+            [ttl_diff,est_pos]=min(abs(est-arrivals(ii)));
+            ttl_diff*(3600*24)
           % if the discrepency is less than 50 ms 
-            if abs(arrival_diff*(3600*24))<0.05
-                estimate(end+1) = est(arrival_pos);
+            if abs(ttl_diff*(3600*24))<0.05
+                estimate(end+1) = est(est_pos);
                 act_arrival(end+1)=arrivals(ii);   % concatenate that timestamp and corresponding snr
                 SNR(end+1)=demod_snr(ii);         
-                x_dist_kept(end+1) = x_dist(ii);
+                x_dist_kept(end+1) = x_dist(est_pos);
+                arclength_kept(end+1) = arc_length(est_pos);
+                hyd_depth_kept(end+1) = hyd_depth(est_pos);
+                ray_trace_x_dist_kept(end+1) = ray_trace_x_dist(est_pos);
             end
 
         end
@@ -180,12 +186,18 @@ while true
 %% Save hourly file
 % 3. Rx File Directory
 % cd /Volumes/ACO_RAP_2/RAP/Oct2018Cruise/Tx_Rx_Output/rx_file/icListen/final/Oct/original_position % EDIT
-cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/icListen/original_depth
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/Sea_surface_ray_trace/
+% cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/No_EFT/icListen
+cd /Users/testuser/Documents/ONR_RAP/Data/Tx_Rx_Output/October2018/rx_file/APL_ray_tracing/icListen
 % Save Variables
 rx_data.est_arrival=estimate;
 rx_data.act_arrival=act_arrival;
 rx_data.SNR=SNR;
 rx_data.x_dist = x_dist_kept;
+rx_data.arclength = arclength_kept;
+rx_data.hyd_depth_kept = hyd_depth_kept;
+rx_data.ray_trace_x_dist_kept = ray_trace_x_dist_kept;
+
 sname =wav_name(1:end-6);
 sname = ['rx_data' '_20' sname(11:12) '_' sname(13:14) '_' sname(15:16) '_' sname(18:19) '_icListen']
 save(sname,'rx_data')
@@ -209,7 +221,7 @@ end
 
 %% Functions
 %%%%
- function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival] = posmv_tx_load(now_day,now_hour)
+ function [tx_t,tx_lat,tx_lon,tx_heading,x_dist,est_arrival,tot_arc_length,depth,surface_dist] = posmv_tx_load(now_day,now_hour);
  % setup
  % 1. Hydrophone Position and Depth
  %%% icListen LAT/LON
@@ -284,7 +296,9 @@ end
 
 x_dist = [];
 est_tt = [];
-
+depth = [];
+tot_arc_length = [];
+surface_dist = [];
 % Geodic Length
 for ii=1:length(tx_lat)
     x_dist(ii) = distance(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon,referenceEllipsoid('WGS84'));
@@ -293,7 +307,10 @@ end
 % Estimated travel time based on CTD cast
 for ii=1:length(x_dist)
     azmth(ii) = azimuth(tx_lat(ii),tx_lon(ii),icListen_lat,icListen_lon);
-    [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth,'Oct','2018');
+%     [~,~,~,~,~,~,~,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth,'Oct','2018');
+    [~,tot_arc_length(ii),~,~,z_flt,~,dis,~,est_tt(ii),~,~] = ray_trace_w_earth_flattening(x_dist(ii),tx_altitude(ii),tx_lon(ii),tx_lat(ii),azmth(ii),icListen_lat,icListen_lon,icListen_depth,'Oct','2018');
+    depth(ii) = z_flt(end);
+    surface_dist(ii) = sum(dis);
 end
 
 % Estimated arrival time

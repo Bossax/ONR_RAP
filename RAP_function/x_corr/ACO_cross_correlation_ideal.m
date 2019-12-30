@@ -35,7 +35,7 @@ if threshold2>threshold
 end
 n=find(SNR>threshold);            %Find large values for demod xcorr
 %%%%
-threshold
+% disp(threshold)
 
 %% Get each xcorr arrival %%
 demod_separation=[];
