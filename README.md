@@ -38,32 +38,6 @@
 
 - *data_error_matrix.m*: returns a data-data covariance matrix Cd. 
 
-### Regression
-
- - *Regression_Analysis_ttp.m*: implements Lasso regression on travel time perturbation data to determine non-physical factor contributions to the measurements.
-
-**Signal_Arrival**: contains scripts to plot signal arrival patterns
-
-- *Signal_Arrival.m*: plots acoustic signals arrival pattern and corresponding surface ranges (Old Code since July 2018).
-
-- *TTP_SNR_Acoustic_savefile_(HEM/icListen).m*: produces .mat files containing acoustic signals and complex envelopes (ttp_snr_sig_data_2018... .mat in ttp_snr_plot folder).
-
-- *TTP_SNR_Acoustic_plot_(HEM/icListen).m*: plots received acoustic signals and corresponding complex envelopes of signals in a specific period. Used to have close-up look of signal receptions and complex envelopes of individual transmission.
-
-- *TTP_SNR_Acoustic_plot_w_psd_icListen.m*: same as above, but also includes power spectra of individual receptions (used for spin courses).
-
-### IRIG_B
-
-- *IRIGB_decoder_test.m* – decode IRIG-B time code recorded in October 2018 (saved in Scarlette files).
-
-
-
-
-### Bottom_bouncing_detection: scripts to find bottom bounces
-
-- *Bottom_bouncing_detection_HEM/ic.m*: plots acoustic signals and complex envelopes and determine the first 2 peaks of the envelopes.
-
-- *All_arrival_detection.m*: finds all signal arrivals which exceed the set SNR threshold
 
 ### Inversion: contains script to perform inversion procedure
 
@@ -79,7 +53,11 @@
 
 - *update_hyd_pos.m*: calculates a new hydrophone geodesic position using the original position and position offsets given by inverse solutions.
 
+- *corr_len_cal.mlx*: calculates correlation length scales from travel time data and plot variograms of the datasets.
+
 ### Data
+**TX_RX_Output** contains transmissiona and reception data files calcualted from raw data using scripts in the Routine folder. These are the files used for subsequent analyses in this project.
+
 - h….ctd: CTD cast data
 
 - ioc_station…csv: tide data
@@ -89,7 +67,6 @@
 - *EOF_SS.mat*: 4 normalized EOF modes with corresponding scaled loadings.
 
 - *RMS_SS.mat*:RMS sound speed profile from EOF analysis
-
 
 
 ### EOF Analysis
@@ -106,11 +83,25 @@
 
 - *HEM_icListen_TTP_plot.m*: creates travel time perturbation plots of the HEM and the icListen and compare mutual data points between the two.
 
-### Etc
+## Ray_Trace_Dzieciuch
+ray tracing scripts from Dzieciuch. Used to compare RAP ray tracing with long-range ray tracing method
+
+### Test_script
+Contains individual analysis scripts and test scripts
 
 - *check_tx.m*: plot transmission information
 
 - *check_posmv.m*:plot POSMV information
+
+- *check_rx.m*:plot plot acoustic reception information
+
+- *HEM_depth from_One_way_traveltime.m*: Analysis on the ACO depth issue which was raised by a conflict between a reult from hydrographic survey and the previous estimate. Computes the ACO depth using one way acoustic travel times of transmissions made from the R/V KM when it is overhead the observatory.
+
+- *Compare_Planar_and_Raycoord*: test ray tracing in the ray coordinate system and compre its results with the palnar ray tracing method used in RAP.
+
+- *ray_tracing_function_withETF_test.m*: Ray tracing in various coordinate systems with Earth Falttening Transformation.
+
+- *Compare_Sep_Oct_Nov_SS.mP*: compare sound speed profiles from CTD casts in Septemebr, October, and November 2018
 
 - *Dopper_plot.m*: plot complex envelopes produced by cross-correlating a reception with frequency-shifted replicas.
 
@@ -118,14 +109,45 @@
 
 - *PSD_HEM/PSD_icListen*: plot periodograms of acoustic receptions from HEM and icListen data
 
+## ############# Below is folders pertaining to early analysis of the project ################
+
+### Signal_Arrival**: contains scripts to plot signal arrival patterns
+
+- *Signal_Arrival.m*: plots acoustic signals arrival pattern and corresponding surface ranges (Old Code since July 2018).
+
+- *TTP_SNR_Acoustic_savefile_(HEM/icListen).m*: produces .mat files containing acoustic signals and complex envelopes (ttp_snr_sig_data_2018... .mat in ttp_snr_plot folder).
+
+- *TTP_SNR_Acoustic_plot_(HEM/icListen).m*: plots received acoustic signals and corresponding complex envelopes of signals in a specific period. Used to have close-up look of signal receptions and complex envelopes of individual transmission.
+
+- *TTP_SNR_Acoustic_plot_w_psd_icListen.m*: same as above, but also includes power spectra of individual receptions (used for spin courses).
+
+### Regression
+
+ - *Regression_Analysis_ttp.m*: implements Lasso regression on travel time perturbation data to determine non-physical factor contributions to the measurements.
+
+### IRIG_B
+
+- *IRIGB_decoder_test.m* – decode IRIG-B time code recorded in October 2018 (saved in Scarlette files)
+
+
+### Bottom_bouncing_detection: scripts to find bottom bounces
+
+- *Bottom_bouncing_detection_HEM/ic.m*: plots acoustic signals and complex envelopes and determine the first 2 peaks of the envelopes.
+
+- *All_arrival_detection.m*: finds all signal arrivals which exceed the set SNR threshold
+
+### RTX
+files related to RTX GPS data analysis to verify functionality of the POS-MV
+
+### SNRvRay_plot
+visualize SNR vs surface distance
+
+
 ## Notes
 
-**Boris June 11 2019** 
 1. *distance.m* is called in many scripts which is a function in Mapping Toolbox. This function replaces *dist.m* function which was found to produce inaccurate geodesic distances.
 
 2. Need to install *Aerospace Toolbox* and *Mapping Toolbox*
-
-
 
 
 ## Work flow
