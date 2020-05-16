@@ -109,7 +109,7 @@ f_lasso_ic3 = 0.4082*r;
 f_lasso_ic4 = -0.0616*r;
 %% scope range
 rmin = 0;
-rmax = 30;
+rmax = 0.1;
 indl = (find(range >= rmin));
 indh = (find(range <= rmax));
 keep_ind = intersect(indl,indh);

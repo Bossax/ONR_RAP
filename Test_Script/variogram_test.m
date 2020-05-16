@@ -1,4 +1,5 @@
 clear
+% Variogram Demo
 x = rand(1000,1)*4-2;
 y = rand(1000,1)*4-2;
 z = 3*sin(x*15)+ randn(size(x));

@@ -11,13 +11,10 @@ global c_v z_v
 c_v = [];
 z_v = [];
 
-geodesic = 25150;   % test 20 km
+geodesic = 20000;   % test 20 km
 hyd_depth = 4730;
 %% load sound speed profile
 SS = soundspeedprofile(hyd_depth);
-
-
-
 
 slant_angle = acot(geodesic/hyd_depth)/pi*180;
 upper_ang = slant_angle+10;
@@ -130,12 +127,13 @@ sinc = 0.05;
 d = 1;
 depht2_v = [];
 ang_ad = [];
-d_err = 0.002;
-while abs(depth_new- rcv_depth) >= d_err % 1mm
+d_err = 0.04; % 3 cm
+r_err = 0.04; % 3 cm
+while abs(depth_new- rcv_depth) >= d_err 
     
     % initial state parameters  
     [c0,~] = find_soundspeed(z0,SS);
-    X0(idt) = 0;                                % time      
+    X0(idt) = 0;                              % time      
     X0(idz) = z0;                             % depth
     X0(idr) = r0;                            % range
     X0(idsh) = cos(pi*theta_new/180)./c0;    % horizontal slowness
@@ -181,9 +179,6 @@ while abs(depth_new- rcv_depth) >= d_err % 1mm
 %     end
 d = d+1;
 end
-
-
-
 
 
  %% Supplementary function
@@ -255,7 +250,6 @@ SS.z = z_flt;
 SS.c = SS_flt;
  end
  
- 
  function [c_z,dcdz] = find_soundspeed(znow,SS)
  c = SS.c;
  z = SS.z;
@@ -263,12 +257,21 @@ SS.c = SS_flt;
  dcdz_all = diff(c)./diff(z);
  % find the interval where znow falls 
  ind = find(znow >= z,1,'last');
- c_lower = c(ind);
- 
- del_z = znow - z(ind);
- dcdz = dcdz_all(ind);
- c_z = c_lower+del_z*dcdz;
- 
+ if ind > length(dcdz_all)
+     ind = length(dcdz_all);
+ end
+ try
+     
+     c_lower = c(ind);
+     del_z = znow - z(ind);
+     dcdz = dcdz_all(ind);
+     c_z = c_lower+del_z*dcdz;
+     
+ catch
+     disp("error");
+     disp(sprinf("Index of z = %.1f, Size dcdz_all = %.1f",ind(end),size(dcdz_all)));
+     
+ end
  
  end
     

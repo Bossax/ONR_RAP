@@ -1,3 +1,4 @@
+% Test Ray tarcing function
 close all
 clearvars -except arc1 arc2 t2 t1 z1 SS1
 

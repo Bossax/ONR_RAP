@@ -1,3 +1,4 @@
+% Test Vdist function to compute geodesics
 clear
 close all
 %Load TX data

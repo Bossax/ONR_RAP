@@ -1,29 +1,39 @@
-% use ray equations from Computationl Ocean Acoustics Textbook
-% equaitons are expressed in Ray coordinates
-% use both depth and horizontal range to determine eigenrays
-% arc length is the differential variable
+% Use ray equations and integration technique from "Computationl Ocean 
+% Acoustics" textbook (page 201).
+%
+% Equaitons are expressed in Ray coordinates (along s).
+%
+% Use both depth and horizontal range to determine eigenrays.
+%
+% Arc length (ds) is the differential variable
+%
+% Compare the result of this method with the planar ray tarcing used in RAP (Dushaw & Colosi)
 
 clear
 close all
  
-
+% surface distances used for computation
 x_dist = [500 1000 5000 10000 15000 20000 25000];
+% hydrophone depth
 z_hyd = 4730;
+% transducer depth
 z_td = 5;
 
 % load sound speed profile (including horizontal gradient dc/dr(z)
 SS = soundspeedprofile(z_hyd);
 
-%%
+%% Calculating loop over all distances
 for ii = 1:length(x_dist)
-    ii
+    disp(ii)
+    % Planar ray tracing with Earth Flattening Transformation
     [est_time2(ii),theta2(ii),arclength2(ii)]= ray_tracing_planar_const_SS(x_dist(ii),z_td,SS);
+    % Ray tacing in ray coordinate system 
     [est_time1(ii),theta1(ii),arclength1(ii)] = ray_trace_raycoor(x_dist(ii),z_td,SS);
 
 end
 theta2 = theta2/pi*180;
 theta1 = 90-theta1;
-%%
+%% Plot the results
 subplot(1,2,1)
 line(x_dist/1000,((est_time2-est_time1)*1000),'Linewidth',2,'Marker','o')
 grid on
@@ -33,9 +43,11 @@ ylabel('\delta t (ms)')
 title({'Travel time difference (TT_{Snell} - TT_{Ekinal})'})
 set(gca,'fontsize',14)
 xlim([0 25])
+ylim([-5 5])
 
 subplot(1,2,2)
-line(SS.dcdr,SS.z,'Linewidth',2)
+% line(SS.dcdr,SS.z,'Linewidth',2)
+line(zeros(1,length(SS.z)),SS.z,'Linewidth',2);
 grid on
 set(gca,'YDir','reverse')
 xlabel('dc/dr')
@@ -109,9 +121,7 @@ for n = 1:length(theta0)
         % check if the ray hits the bottom
         if znow >= rcv_depth 
             break;
-        end
-        
-       
+        end        
     end
     Range(n) = rnow;
     Depth(n) = znow;
@@ -451,14 +461,17 @@ R_e = 6371000;
 
 % Horizontal Sound Speed Gradient
 a = 3.8e-4;
-dcdr = a*exp(-z_elps/600);
+% dcdr = a*exp(-z_elps/600);
+dcdr = 0;
 % return Sound speed profile in the ellipsoidal coordinates
 SS.z = z_elps;
 SS.c = SS_elps;
 SS.dcdr = dcdr;
  end
  
- 
+% function to find sound speed, vertical sound speed gradient, and horizontal
+% sound speed gradient (c_z, dcdz,dcdr) at a given depth (znow) and
+% a given sound speed profile (SS).
  function [c_z,dcdz,dcdr] = find_soundspeed(znow,SS)
  c = SS.c;
  z = SS.z;
@@ -466,6 +479,7 @@ SS.dcdr = dcdr;
  
  dcdz_all = diff(c)./diff(z);
  Hgrad_dz = diff(Hgrad)./diff(z);
+ 
  % find the interval where znow falls 
  ind = find(znow >= z,1,'last');
  c_lower = c(ind);
@@ -481,12 +495,13 @@ SS.dcdr = dcdr;
  
  end
     
+% differentials 
 function dx =  diff_X(S,x,SS)
    idt = 1; idz = 2; idr = 3; idsh = 4; idsv = 5;
    % sound speed
    [c_z,dcdz,dcdr] = find_soundspeed(x(idz),SS);
 %    dcdr = 0.00005;        % horizontal ss gradient
-   
+   dcdr = 0;
    
    dx(idt) = 1/c_z;
    dx(idz) = c_z*x(idsv);

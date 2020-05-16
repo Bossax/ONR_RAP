@@ -1,3 +1,4 @@
+% Comparing sound speed profiles from CTD casts in September, October, and November 2018
 close all
 clear
 

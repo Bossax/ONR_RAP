@@ -1,4 +1,4 @@
-% convert geodetic position to local east north depth
+% testing algorithm to convert geodetic position to local east north depth
 close all
 clear
 

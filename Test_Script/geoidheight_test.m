@@ -1,5 +1,6 @@
-%  geoidheight function test 
-% geoid height statisti of the transmission data
+% geoid height function test 
+% geoid height statistics of the transmission data
+% visualize geoid heights of all acoustic tranmission locations
 clear
 close all
 
@@ -11,6 +12,7 @@ day = 27:30;
 start_hour = 3;
 end_hour = 14;
 hydrophone= 'HEM';
+% download tx rx data from October 2018
 [tx_t,tx_lon,tx_lat,tx_heading,tx_altitude,tx_xvel,range,x_err,y_err,z_err,act_arrival,est_arrival,SNR] = tx_rx_extraction_Oct(day,start_hour,end_hour,hydrophone);
 ttp = (act_arrival-est_arrival)*3600*24*1000;
 % geoid height
