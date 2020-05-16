@@ -75,7 +75,7 @@
 - *create_HOTS_EOF_temp_sal.m*: script calculates the first two modes for temperature and salinity at ACO
 - *EOF_analysis.m*: function file that computes the eigenvectors and eigenvalues for a given dataset. Uses the function "acf.m" for autocorrelation.
 
-**Travel_Time_Perturbation_plot**
+### Travel_Time_Perturbation_plot
 
 - *parameters_and_TTP_plot.m*: creates various plots of travel time perturbations of either “HEM” or “icListen” hydrophones
 
@@ -83,7 +83,7 @@
 
 - *HEM_icListen_TTP_plot.m*: creates travel time perturbation plots of the HEM and the icListen and compare mutual data points between the two.
 
-## Ray_Trace_Dzieciuch
+### Ray_Trace_Dzieciuch
 ray tracing scripts from Dzieciuch. Used to compare RAP ray tracing with long-range ray tracing method
 
 ### Test_script
