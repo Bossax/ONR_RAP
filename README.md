@@ -109,9 +109,9 @@ Contains individual analysis scripts and test scripts
 
 - *PSD_HEM/PSD_icListen*: plot periodograms of acoustic receptions from HEM and icListen data
 
-## ############# Below is folders pertaining to early analysis of the project ################
+## ###### Below is folders pertaining to early analysis of the project ###########
 
-### Signal_Arrival**: contains scripts to plot signal arrival patterns
+### Signal_Arrival: contains scripts to plot signal arrival patterns
 
 - *Signal_Arrival.m*: plots acoustic signals arrival pattern and corresponding surface ranges (Old Code since July 2018).
 
