@@ -40,6 +40,7 @@
 
 
 ### Inversion: contains script to perform inversion procedure
+For inverse result data files, go to Ikepili > RAP > Data > inversion_file
 
 - *Simulation_2D.m*: simulates case studies in of 2D ocean (depth independence).
 
